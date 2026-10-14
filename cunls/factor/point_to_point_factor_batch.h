@@ -52,7 +52,7 @@ namespace cunls {
  *       layout for each is:
  *       [pt0: 3 floats][pt1: 3 floats]...[ptN-1: 3 floats]
  */
-class CUNLS_API PointToPointFactorBatch : public SizedFactorBatch<3, 6> {
+class CUNLS_CLASS_API PointToPointFactorBatch : public SizedFactorBatch<3, 6> {
   using Base = SizedFactorBatch<3, 6>;
   using Vector3 = Vector<3>;
 
@@ -93,9 +93,9 @@ class CUNLS_API PointToPointFactorBatch : public SizedFactorBatch<3, 6> {
    *        is given); 0 means NumActiveFactors().
    * @return true on success.
    */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   PointToPointFactorBatch() = default;

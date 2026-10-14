@@ -65,7 +65,7 @@ struct QuadrotorParameters {
  * limits 0 <= f_i <= f_max as BoundFactorBatch<4>. The model needs short
  * steps (about 10-25 ms).
  */
-class CUNLS_API QuadrotorFactorBatch : public SizedFactorBatch<12, 6, 3, 3, 4, 6, 3, 3> {
+class CUNLS_CLASS_API QuadrotorFactorBatch : public SizedFactorBatch<12, 6, 3, 3, 4, 6, 3, 3> {
  public:
   /**
    * @param time_steps Device array of `capacity` step durations dt_k [s].
@@ -75,12 +75,12 @@ class CUNLS_API QuadrotorFactorBatch : public SizedFactorBatch<12, 6, 3, 3, 4, 6
    * @throws std::invalid_argument if time_steps is null or mass, inertia or
    *         arm length are not positive.
    */
-  QuadrotorFactorBatch(const float *time_steps, const QuadrotorParameters &parameters,
-                       size_t capacity);
+  CUNLS_API QuadrotorFactorBatch(const float *time_steps, const QuadrotorParameters &parameters,
+                                 size_t capacity);
 
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
   const QuadrotorParameters &Parameters() const { return parameters_; }
 

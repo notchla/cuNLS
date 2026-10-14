@@ -21,17 +21,17 @@ namespace cunls {
  *   T_new = T * Exp(Hat(xi)),
  * with Exp the matrix exponential and projection to det = 1. *
  */
-class CUNLS_API SL4StateBatch : public SizedStateBatch<16, 15> {
+class CUNLS_CLASS_API SL4StateBatch : public SizedStateBatch<16, 15> {
  public:
   using Base = SizedStateBatch<16, 15>;
 
-  SL4StateBatch(const float *device_ptr, size_t capacity);
+  CUNLS_API SL4StateBatch(const float *device_ptr, size_t capacity);
 
-  SL4StateBatch(const float *device_ptr, size_t capacity, const int *device_constant_state_ids,
-                size_t const_capacity);
+  CUNLS_API SL4StateBatch(const float *device_ptr, size_t capacity,
+                          const int *device_constant_state_ids, size_t const_capacity);
 
-  void Plus(const float *x, const float *delta, float *x_plus_delta, cudaStream_t stream,
-            size_t num_replicas = 1) override;
+  CUNLS_API void Plus(const float *x, const float *delta, float *x_plus_delta, cudaStream_t stream,
+                      size_t num_replicas = 1) override;
 
  private:
   mutable dvector<SL4Transform> delta_transforms_;

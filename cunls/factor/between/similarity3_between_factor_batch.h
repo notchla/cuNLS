@@ -22,16 +22,17 @@ namespace cunls {
  *   H_left  = -J_l^{-1}(r) * Ad(Delta)
  *   H_right =  J_r^{-1}(r)
  */
-class CUNLS_API Similarity3BetweenFactorBatch : public SizedFactorBatch<7, 7, 7> {
+class CUNLS_CLASS_API Similarity3BetweenFactorBatch : public SizedFactorBatch<7, 7, 7> {
   using Base = SizedFactorBatch<7, 7, 7>;
 
  public:
-  Similarity3BetweenFactorBatch(const Similarity3Transform *pose_deltas_ptr, size_t capacity);
+  CUNLS_API Similarity3BetweenFactorBatch(const Similarity3Transform *pose_deltas_ptr,
+                                          size_t capacity);
 
   /** @brief Evaluates residuals and Jacobians; follows FactorBatch::Evaluate's item contract. */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   Similarity3BetweenFactorBatch() = default;

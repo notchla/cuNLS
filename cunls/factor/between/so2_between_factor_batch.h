@@ -21,16 +21,16 @@ namespace cunls {
  * SO3BetweenFactorBatch: zero at R_right = R_left * R_delta^T.
  * Since SO(2) is abelian, Jacobians are exact: H_left = -1, H_right = 1.
  */
-class CUNLS_API SO2BetweenFactorBatch : public SizedFactorBatch<1, 1, 1> {
+class CUNLS_CLASS_API SO2BetweenFactorBatch : public SizedFactorBatch<1, 1, 1> {
   using Base = SizedFactorBatch<1, 1, 1>;
 
  public:
-  SO2BetweenFactorBatch(const SO2Rotation *pose_deltas_ptr, size_t capacity);
+  CUNLS_API SO2BetweenFactorBatch(const SO2Rotation *pose_deltas_ptr, size_t capacity);
 
   /** @brief Evaluates residuals and Jacobians; follows FactorBatch::Evaluate's item contract. */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   SO2BetweenFactorBatch() = default;

@@ -42,7 +42,7 @@ namespace cunls {
  * The class uses GPU-accelerated operations via fused CUDA kernels
  * for efficient batch processing of multiple rotations.
  */
-class CUNLS_API SO2StateBatch : public SizedStateBatch<4, 1> {
+class CUNLS_CLASS_API SO2StateBatch : public SizedStateBatch<4, 1> {
  public:
   using Base = SizedStateBatch<4, 1>;
 
@@ -55,7 +55,7 @@ class CUNLS_API SO2StateBatch : public SizedStateBatch<4, 1> {
    * @param capacity Number of states the buffer holds. The active count
    *        starts at 0: call SetNumActiveStates(n) before solving.
    */
-  SO2StateBatch(const float *device_ptr, size_t capacity);
+  CUNLS_API SO2StateBatch(const float *device_ptr, size_t capacity);
 
   /**
    * @brief Constructs a batch of SO(2) states with constant state
@@ -70,8 +70,8 @@ class CUNLS_API SO2StateBatch : public SizedStateBatch<4, 1> {
    * the indices of states that should remain constant.
    * @param const_capacity Number of ids the constant-id buffer holds.
    */
-  SO2StateBatch(const float *device_ptr, size_t capacity, const int *device_constant_state_ids,
-                size_t const_capacity);
+  CUNLS_API SO2StateBatch(const float *device_ptr, size_t capacity,
+                          const int *device_constant_state_ids, size_t const_capacity);
 
   /**
    * @brief Performs the Plus operation: x_plus_delta = x * Exp(delta)
@@ -85,8 +85,8 @@ class CUNLS_API SO2StateBatch : public SizedStateBatch<4, 1> {
    * @param x_plus_delta Output rotation matrices (device pointer)
    * @param stream CUDA stream for asynchronous execution
    */
-  void Plus(const float *x, const float *delta, float *x_plus_delta, cudaStream_t stream,
-            size_t num_replicas = 1) override;
+  CUNLS_API void Plus(const float *x, const float *delta, float *x_plus_delta, cudaStream_t stream,
+                      size_t num_replicas = 1) override;
 
  private:
   mutable dvector<Matrix<2>> delta_rotations_;

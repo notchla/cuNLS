@@ -43,7 +43,7 @@ namespace cunls {
  *       transformation matrices and remain valid for the lifetime of this
  * object. Memory layout: [T0: 16 floats][T1: 16 floats]...[TN-1: 16 floats]
  */
-class CUNLS_API SE3PriorFactorBatch : public SizedFactorBatch<6, 6> {
+class CUNLS_CLASS_API SE3PriorFactorBatch : public SizedFactorBatch<6, 6> {
   using Base = SizedFactorBatch<6, 6>;
 
  public:
@@ -57,7 +57,7 @@ class CUNLS_API SE3PriorFactorBatch : public SizedFactorBatch<6, 6> {
    * @param capacity Number of factors the measurement buffers hold. The active
    *        count starts at 0: call SetNumActiveFactors(n) before evaluating or solving.
    */
-  SE3PriorFactorBatch(const SE3Transform *observations_ptr, size_t capacity);
+  CUNLS_API SE3PriorFactorBatch(const SE3Transform *observations_ptr, size_t capacity);
 
   /**
    * @brief Evaluates SE(3) prior residuals and optionally Jacobians.
@@ -69,9 +69,9 @@ class CUNLS_API SE3PriorFactorBatch : public SizedFactorBatch<6, 6> {
    * @param stream CUDA stream for asynchronous execution.
    * @return true on success.
    */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   SE3PriorFactorBatch() = default;

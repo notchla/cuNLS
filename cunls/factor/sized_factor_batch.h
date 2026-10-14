@@ -16,7 +16,6 @@
  */
 
 #pragma once
-#include "cunls/common/export.h"
 #include "factor_batch.h"
 
 namespace cunls {
@@ -67,40 +66,5 @@ class SizedFactorBatch : public FactorBatch {
   /** @brief Compile-time constant for the residual dimension. */
   static constexpr size_t residual_size_ = kResidualSize;
 };
-// Specializations used by exported cunls classes. MSVC exports a dllexport class's template
-// base along with it, so every such base must be declared here too: otherwise a consumer that
-// instantiates the same specialization collides with the DLL's copy (LNK2005).
-extern template class CUNLS_API SizedFactorBatch<1, 1>;
-extern template class CUNLS_API SizedFactorBatch<1, 1, 1>;
-extern template class CUNLS_API SizedFactorBatch<1, 3>;
-extern template class CUNLS_API SizedFactorBatch<1, 6>;
-extern template class CUNLS_API SizedFactorBatch<2, 1, 1, 1, 1>;
-extern template class CUNLS_API SizedFactorBatch<2, 6>;
-extern template class CUNLS_API SizedFactorBatch<2, 6, 3>;
-extern template class CUNLS_API SizedFactorBatch<3, 1, 1, 1, 1, 1, 1>;
-extern template class CUNLS_API SizedFactorBatch<3, 3>;
-extern template class CUNLS_API SizedFactorBatch<3, 3, 2, 3>;
-extern template class CUNLS_API SizedFactorBatch<3, 3, 3>;
-extern template class CUNLS_API SizedFactorBatch<3, 3, 3, 3>;
-extern template class CUNLS_API SizedFactorBatch<3, 6>;
-extern template class CUNLS_API SizedFactorBatch<4, 4>;
-extern template class CUNLS_API SizedFactorBatch<4, 4, 4>;
-extern template class CUNLS_API SizedFactorBatch<4, 6, 2, 6>;
-extern template class CUNLS_API SizedFactorBatch<5, 3, 2, 2, 3, 2>;
-extern template class CUNLS_API SizedFactorBatch<6, 3, 3, 3, 3>;
-extern template class CUNLS_API SizedFactorBatch<6, 6>;
-extern template class CUNLS_API SizedFactorBatch<6, 6, 2, 2, 6, 2>;
-extern template class CUNLS_API SizedFactorBatch<6, 6, 6>;
-extern template class CUNLS_API SizedFactorBatch<6, 6, 6, 6>;
-extern template class CUNLS_API SizedFactorBatch<7, 7>;
-extern template class CUNLS_API SizedFactorBatch<7, 7, 7>;
-extern template class CUNLS_API SizedFactorBatch<9, 3, 3, 3, 3, 3, 3>;
-extern template class CUNLS_API SizedFactorBatch<12, 6, 3, 3, 4, 6, 3, 3>;
-extern template class CUNLS_API SizedFactorBatch<12, 6, 3, 3, 12, 6, 3, 3>;
-extern template class CUNLS_API SizedFactorBatch<12, 6, 6, 6, 6>;
-extern template class CUNLS_API SizedFactorBatch<15, 6, 3, 6, 6, 3, 6>;
-extern template class CUNLS_API SizedFactorBatch<15, 15>;
-extern template class CUNLS_API SizedFactorBatch<15, 15, 15>;
-extern template class CUNLS_API SizedFactorBatch<18, 6, 6, 6, 6, 6, 6>;
 
 }  // namespace cunls

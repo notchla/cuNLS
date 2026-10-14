@@ -57,7 +57,7 @@ namespace cunls {
  *       this object. The memory layout for each is:
  *       [vec0: 3 floats][vec1: 3 floats]...[vecN-1: 3 floats]
  */
-class CUNLS_API PointToPlaneFactorBatch : public SizedFactorBatch<1, 6> {
+class CUNLS_CLASS_API PointToPlaneFactorBatch : public SizedFactorBatch<1, 6> {
   using Base = SizedFactorBatch<1, 6>;
   using Vector3 = Vector<3>;
 
@@ -102,9 +102,9 @@ class CUNLS_API PointToPlaneFactorBatch : public SizedFactorBatch<1, 6> {
    *        is given); 0 means NumActiveFactors().
    * @return true on success.
    */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   PointToPlaneFactorBatch() = default;

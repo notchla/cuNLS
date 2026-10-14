@@ -23,16 +23,16 @@ namespace cunls {
  * SO(3) adjoint Ad(R) = R. These follow from SO3StateBatch::Plus applying a
  * right-multiplicative local update (X' = X * Exp(eps)).
  */
-class CUNLS_API SO3BetweenFactorBatch : public SizedFactorBatch<3, 3, 3> {
+class CUNLS_CLASS_API SO3BetweenFactorBatch : public SizedFactorBatch<3, 3, 3> {
   using Base = SizedFactorBatch<3, 3, 3>;
 
  public:
-  SO3BetweenFactorBatch(const SO3Rotation *pose_deltas_ptr, size_t capacity);
+  CUNLS_API SO3BetweenFactorBatch(const SO3Rotation *pose_deltas_ptr, size_t capacity);
 
   /** @brief Evaluates residuals and Jacobians; follows FactorBatch::Evaluate's item contract. */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   SO3BetweenFactorBatch() = default;

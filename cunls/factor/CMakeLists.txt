@@ -43,7 +43,6 @@ add_library(cunls_factor OBJECT
   prior/so3_prior_factor_batch.cu
   pnp_factor_batch.cu
   reprojection_factor_batch.cu
-  sized_factor_batch.cpp
   symmetric_point_to_plane_factor_batch.cu
   weighted_factor_batch.cu
 )

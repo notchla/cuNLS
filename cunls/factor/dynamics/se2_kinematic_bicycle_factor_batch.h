@@ -46,7 +46,7 @@ namespace cunls {
  * slopes and ramps, SE3KinematicBicycleFactorBatch is the SE(3) variant (same
  * body twist).
  */
-class CUNLS_API SE2KinematicBicycleFactorBatch : public SizedFactorBatch<5, 3, 2, 2, 3, 2> {
+class CUNLS_CLASS_API SE2KinematicBicycleFactorBatch : public SizedFactorBatch<5, 3, 2, 2, 3, 2> {
  public:
   /**
    * @param time_steps Device array of `capacity` step durations dt_k [s].
@@ -55,11 +55,12 @@ class CUNLS_API SE2KinematicBicycleFactorBatch : public SizedFactorBatch<5, 3, 2
    *        starts at 0: call SetNumActiveFactors(n) before solving.
    * @throws std::invalid_argument if time_steps is null or L is not positive.
    */
-  SE2KinematicBicycleFactorBatch(const float *time_steps, float wheelbase, size_t capacity);
+  CUNLS_API SE2KinematicBicycleFactorBatch(const float *time_steps, float wheelbase,
+                                           size_t capacity);
 
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   const float *time_steps_;

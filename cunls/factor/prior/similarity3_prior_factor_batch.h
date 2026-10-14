@@ -45,7 +45,7 @@ namespace cunls {
  *       Each Sim(3) matrix is stored row-major as:
  *       [R00 R01 R02 tx, R10 R11 R12 ty, R20 R21 R22 tz, 0 0 0 1/s]
  */
-class CUNLS_API Similarity3PriorFactorBatch : public SizedFactorBatch<7, 7> {
+class CUNLS_CLASS_API Similarity3PriorFactorBatch : public SizedFactorBatch<7, 7> {
   using Base = SizedFactorBatch<7, 7>;
 
  public:
@@ -59,7 +59,8 @@ class CUNLS_API Similarity3PriorFactorBatch : public SizedFactorBatch<7, 7> {
    * @param capacity Number of factors the measurement buffers hold. The active
    *        count starts at 0: call SetNumActiveFactors(n) before evaluating or solving.
    */
-  Similarity3PriorFactorBatch(const Similarity3Transform *observations_ptr, size_t capacity);
+  CUNLS_API Similarity3PriorFactorBatch(const Similarity3Transform *observations_ptr,
+                                        size_t capacity);
 
   /**
    * @brief Evaluates Sim(3) prior residuals and optionally Jacobians.
@@ -74,9 +75,9 @@ class CUNLS_API Similarity3PriorFactorBatch : public SizedFactorBatch<7, 7> {
    *        is given); 0 means NumActiveFactors().
    * @return true on success.
    */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const final;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const final;
 
  private:
   Similarity3PriorFactorBatch() = default;

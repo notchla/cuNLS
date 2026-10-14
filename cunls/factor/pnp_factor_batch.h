@@ -39,22 +39,23 @@ namespace cunls {
  *   - 2: Residual dimension
  *   - 6: SE(3) pose tangent
  */
-class CUNLS_API PnPFactorBatch : public SizedFactorBatch<2, 6> {
+class CUNLS_CLASS_API PnPFactorBatch : public SizedFactorBatch<2, 6> {
  public:
   /**
    * @brief Constructs with identity camera-from-rig extrinsics.
    */
-  PnPFactorBatch(const Vector<2> *observations, const Vector<3> *points_world, size_t capacity,
-                 float z_threshold = 1e-3f);
+  CUNLS_API PnPFactorBatch(const Vector<2> *observations, const Vector<3> *points_world,
+                           size_t capacity, float z_threshold = 1e-3f);
 
   /**
    * @brief Constructs with per-correspondence camera-from-rig transforms.
    */
-  PnPFactorBatch(const Vector<2> *observations, const SE3Transform *poses_camera_from_rig,
-                 const Vector<3> *points_world, size_t capacity, float z_threshold = 1e-3f);
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API PnPFactorBatch(const Vector<2> *observations, const SE3Transform *poses_camera_from_rig,
+                           const Vector<3> *points_world, size_t capacity,
+                           float z_threshold = 1e-3f);
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   PnPFactorBatch() = delete;

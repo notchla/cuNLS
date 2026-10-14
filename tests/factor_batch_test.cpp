@@ -25,6 +25,7 @@
 
 #include "cunls/common/device_vector.h"
 #include "cunls/common/types.h"
+#include "cunls/factor/between/se3_between_factor_batch.h"
 #include "cunls/factor/prior/prior_vector_factor_batch.h"
 #include "cunls/state/vector_state_batch.h"
 
@@ -59,6 +60,24 @@ TEST(FactorBatchTest, Simple) {
 
   ASSERT_EQ(factor_batch.NumActiveFactors(), num_vectors - 1);
   ASSERT_EQ(vector_states.NumActiveStates(), num_vectors);
+}
+
+/** A user factor batch whose base is also the base of a built-in exported class. */
+class UserSE3BetweenLayoutFactorBatch : public SE3BetweenFactorBatch::sized_layout {
+ public:
+  using SE3BetweenFactorBatch::sized_layout::SizedFactorBatch;
+  bool Evaluate(float *, float *, float const *const *, cudaStream_t, const int * = nullptr,
+                size_t = 0) const override {
+    return true;
+  }
+};
+
+// Links only if the library doesn't export SizedFactorBatch<6, 6, 6> (LNK2005 on MSVC otherwise).
+TEST(SizedFactorBatchTest, UserBatchSharesBuiltInBase) {
+  SE3BetweenFactorBatch built_in(nullptr, 0);
+  UserSE3BetweenLayoutFactorBatch user(0);
+  EXPECT_EQ(built_in.ResidualsSize(), user.ResidualsSize());
+  EXPECT_EQ(built_in.StateSizes(), user.StateSizes());
 }
 
 }  // namespace cunls

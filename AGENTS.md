@@ -140,9 +140,9 @@ builds with hidden visibility on Linux too, so a missing annotation also breaks 
   MSVC instantiates the implicit copy of a dllexport class.
 - Explicit function-template instantiations carry `CUNLS_API` on the instantiation itself: nvcc drops it
   from the primary declaration.
-- A new built-in class based on a new `SizedFactorBatch`/`SizedStateBatch` specialization must add that
-  specialization to the `extern template` list in its header and to `sized_*_batch.cpp`. Neither platform's
-  build catches a missing entry; it shows up as LNK2005 in a Windows consumer.
+- A class derived from `SizedStateBatch` or `SizedFactorBatch` takes `CUNLS_CLASS_API`, with `CUNLS_API` on
+  each member defined out of line (constructors, `Plus`, `Evaluate`). A dllexport class would also export its
+  base specialization, which collides (LNK2005) with a consumer's own instantiation of it.
 
 ---
 

@@ -32,6 +32,16 @@
 #define CUNLS_API
 #endif
 
+// CUNLS_CLASS_API marks a class exported member by member: its out-of-line members carry
+// CUNLS_API. On MSVC the class stays unexported, because a dllexport class also exports its
+// template base specialization (e.g. SizedStateBatch<16, 6>), which then collides (LNK2005)
+// with a consumer's own instantiation. Elsewhere it exports the class's typeinfo and vtable.
+#if defined(_WIN32)
+#define CUNLS_CLASS_API
+#else
+#define CUNLS_CLASS_API CUNLS_API
+#endif
+
 // cuDSS classes are compiled only with CUNLS_ENABLE_CUDSS, and a dllexport class makes every
 // includer emit its implicit members, which would not link without them.
 #if defined(CUNLS_BUILDING) && !defined(CUNLS_ENABLE_CUDSS)
@@ -44,10 +54,7 @@
 // C4251/C4275 (and nvcc's 1394) flag std:: members and non-exported bases of
 // exported classes. Benign: consumers must use the same MSVC toolset and
 // Release CRT as cunls.
-// C4910: inside the DLL build MSVC ignores `extern` on the Sized*Batch
-// explicit instantiation declarations and instantiates them anyway, matching
-// the explicit instantiations cunls exports.
-#pragma warning(disable : 4251 4275 4910)
+#pragma warning(disable : 4251 4275)
 #ifdef __CUDACC__
 #pragma nv_diag_suppress 1394
 #endif

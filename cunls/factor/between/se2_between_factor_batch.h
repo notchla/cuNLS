@@ -22,16 +22,16 @@ namespace cunls {
  *   H_left  = -J_l^{-1}(r) * Ad(Delta)
  *   H_right =  J_r^{-1}(r)
  */
-class CUNLS_API SE2BetweenFactorBatch : public SizedFactorBatch<3, 3, 3> {
+class CUNLS_CLASS_API SE2BetweenFactorBatch : public SizedFactorBatch<3, 3, 3> {
   using Base = SizedFactorBatch<3, 3, 3>;
 
  public:
-  SE2BetweenFactorBatch(const SE2Transform *pose_deltas_ptr, size_t capacity);
+  CUNLS_API SE2BetweenFactorBatch(const SE2Transform *pose_deltas_ptr, size_t capacity);
 
   /** @brief Evaluates residuals and Jacobians; follows FactorBatch::Evaluate's item contract. */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   SE2BetweenFactorBatch() = default;

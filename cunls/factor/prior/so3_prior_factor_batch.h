@@ -42,7 +42,7 @@ namespace cunls {
  *       rotation matrices and remain valid for the lifetime of this object.
  *       Memory layout: [R0: 9 floats][R1: 9 floats]...[RN-1: 9 floats]
  */
-class CUNLS_API SO3PriorFactorBatch : public SizedFactorBatch<3, 3> {
+class CUNLS_CLASS_API SO3PriorFactorBatch : public SizedFactorBatch<3, 3> {
   using Base = SizedFactorBatch<3, 3>;
 
  public:
@@ -54,7 +54,7 @@ class CUNLS_API SO3PriorFactorBatch : public SizedFactorBatch<3, 3> {
    * @param capacity Number of factors the measurement buffers hold. The active
    *        count starts at 0: call SetNumActiveFactors(n) before evaluating or solving.
    */
-  SO3PriorFactorBatch(const SO3Rotation *observations_ptr, size_t capacity);
+  CUNLS_API SO3PriorFactorBatch(const SO3Rotation *observations_ptr, size_t capacity);
 
   /**
    * @brief Evaluates SO(3) prior residuals and optionally Jacobians.
@@ -69,9 +69,9 @@ class CUNLS_API SO3PriorFactorBatch : public SizedFactorBatch<3, 3> {
    *        is given); 0 means NumActiveFactors().
    * @return true on success.
    */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const final;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const final;
 
  private:
   SO3PriorFactorBatch() = default;

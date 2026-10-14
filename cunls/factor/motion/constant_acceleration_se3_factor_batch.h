@@ -46,23 +46,24 @@ namespace cunls {
  *
  * Inherits from SizedFactorBatch<18, 6, 6, 6, 6, 6, 6>.
  */
-class CUNLS_API ConstantAccelerationSE3FactorBatch : public SizedFactorBatch<18, 6, 6, 6, 6, 6, 6> {
+class CUNLS_CLASS_API ConstantAccelerationSE3FactorBatch
+    : public SizedFactorBatch<18, 6, 6, 6, 6, 6, 6> {
  public:
   /**
    * @param dt_ptr Device pointer to per-factor time deltas, not owned.
    * @param capacity Number of factors the measurement buffers hold. The active
    *        count starts at 0: call SetNumActiveFactors(n) before evaluating or solving.
    */
-  ConstantAccelerationSE3FactorBatch(const float *dt_ptr, size_t capacity);
+  CUNLS_API ConstantAccelerationSE3FactorBatch(const float *dt_ptr, size_t capacity);
 
   /**
    * @brief Evaluates residuals and (optionally) Jacobians. Follows
    * FactorBatch::Evaluate's item contract: item t reads the time delta of
    * factor `factor_ids[t]` (or `t % NumActiveFactors()`) and the states of item t.
    */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   ConstantAccelerationSE3FactorBatch() = delete;

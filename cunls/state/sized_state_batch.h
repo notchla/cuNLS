@@ -22,7 +22,6 @@
 #include <stdexcept>
 #include <string>
 
-#include "cunls/common/export.h"
 #include "state_batch.h"
 
 namespace cunls {
@@ -278,15 +277,5 @@ class SizedStateBatch : public StateBatch {
   /** @brief Constant-id buffer capacity (the constructor's count). */
   size_t const_capacity_ = 0;
 };
-
-// Specializations used by exported cunls classes. MSVC exports a dllexport class's template
-// base along with it, so every such base must be declared here too: otherwise a consumer that
-// instantiates the same specialization collides with the DLL's copy (LNK2005).
-extern template class CUNLS_API SizedStateBatch<4, 1>;
-extern template class CUNLS_API SizedStateBatch<9, 3>;
-extern template class CUNLS_API SizedStateBatch<9, 4>;
-extern template class CUNLS_API SizedStateBatch<16, 6>;
-extern template class CUNLS_API SizedStateBatch<16, 7>;
-extern template class CUNLS_API SizedStateBatch<16, 15>;
 
 }  // namespace cunls

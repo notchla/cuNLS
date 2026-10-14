@@ -46,7 +46,7 @@ namespace cunls {
  *       valid for the lifetime of this object. The memory layout is:
  *       [delta0: 16 floats][delta1: 16 floats]...[deltaN-1: 16 floats]
  */
-class CUNLS_API SE3BetweenFactorBatch : public SizedFactorBatch<6, 6, 6> {
+class CUNLS_CLASS_API SE3BetweenFactorBatch : public SizedFactorBatch<6, 6, 6> {
   using Base = SizedFactorBatch<6, 6, 6>;
 
  public:
@@ -60,7 +60,7 @@ class CUNLS_API SE3BetweenFactorBatch : public SizedFactorBatch<6, 6, 6> {
    * @param capacity Number of factors the measurement buffers hold. The active
    *        count starts at 0: call SetNumActiveFactors(n) before evaluating or solving.
    */
-  SE3BetweenFactorBatch(const SE3Transform *pose_deltas_ptr, size_t capacity);
+  CUNLS_API SE3BetweenFactorBatch(const SE3Transform *pose_deltas_ptr, size_t capacity);
 
   /**
    * @brief Evaluates the factor and optionally computes Jacobians.
@@ -77,9 +77,9 @@ class CUNLS_API SE3BetweenFactorBatch : public SizedFactorBatch<6, 6, 6> {
    * @param stream CUDA stream for asynchronous execution
    * @return true if evaluation succeeded, false otherwise
    */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   /// Private default constructor to prevent default construction
