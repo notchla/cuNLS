@@ -23,6 +23,7 @@
 #include <mutex>
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/common/helper.h"
 #include "cunls/common/types.h"
 
@@ -34,7 +35,7 @@ namespace cunls {
  * @param status The cuDSS status code to convert.
  * @return A string describing the status code.
  */
-const char *cudssGetErrorString(int status);
+CUNLS_API const char *cudssGetErrorString(int status);
 
 /**
  * @brief Macro to check cuDSS status and throw an exception on error.
@@ -59,7 +60,7 @@ const char *cudssGetErrorString(int status);
  * A device allocation is reallocated only when the requested size exceeds
  * the retained capacity of an available block.
  */
-class cuDSSDeviceMemPool {
+class CUNLS_CUDSS_API cuDSSDeviceMemPool {
  public:
   cuDSSDeviceMemPool() = default;
 
@@ -103,12 +104,12 @@ class cuDSSDeviceMemPool {
 /**
  * @brief C callback wrapper for cuDSS device allocation.
  */
-int cuDSSDeviceMemPoolAlloc(void *ctx, void **ptr, size_t size, cudaStream_t stream);
+CUNLS_API int cuDSSDeviceMemPoolAlloc(void *ctx, void **ptr, size_t size, cudaStream_t stream);
 
 /**
  * @brief C callback wrapper for cuDSS device deallocation.
  */
-int cuDSSDeviceMemPoolDealloc(void *ctx, void *ptr, size_t size, cudaStream_t stream);
+CUNLS_API int cuDSSDeviceMemPoolDealloc(void *ctx, void *ptr, size_t size, cudaStream_t stream);
 
 /**
  * @brief Installs a cuDSS memory handler backed by a custom pool.
@@ -117,15 +118,15 @@ int cuDSSDeviceMemPoolDealloc(void *ctx, void *ptr, size_t size, cudaStream_t st
  * @param pool Pool object that must outlive handle usage.
  * @param handler_name Optional allocator name shown by cuDSS.
  */
-void SetcuDSSDeviceMemHandler(void *handle, cuDSSDeviceMemPool &pool,
-                              const char *handler_name = "cunls device pool");
+CUNLS_API void SetcuDSSDeviceMemHandler(void *handle, cuDSSDeviceMemPool &pool,
+                                        const char *handler_name = "cunls device pool");
 
 /**
  * @brief Detaches the cuDSS memory handler from the given handle.
  *
  * @param handle Opaque cuDSS handle (cudssHandle_t).
  */
-void DetachcuDSSDeviceMemHandler(void *handle);
+CUNLS_API void DetachcuDSSDeviceMemHandler(void *handle);
 
 /**
  * @brief RAII wrapper for cuDSS handle with stream management.
@@ -134,7 +135,7 @@ void DetachcuDSSDeviceMemHandler(void *handle);
  * a CUDA stream. The handle is lazily initialized when GetHandle() is called
  * and automatically destroyed in the destructor.
  */
-class cuDSSHandle {
+class CUNLS_CUDSS_API cuDSSHandle {
  public:
   cuDSSHandle() = default;
 
@@ -168,7 +169,7 @@ class cuDSSHandle {
  * This class creates a cuDSS descriptor from either a CSR sparse matrix
  * or a dense vector and manages its lifecycle.
  */
-class cuDSSDescription {
+class CUNLS_CUDSS_API cuDSSDescription {
  public:
   /**
    * @brief Constructs a cuDSS matrix descriptor from a CSR sparse matrix.
@@ -206,7 +207,7 @@ class cuDSSDescription {
  * This class manages a cuDSS configuration object that controls solver
  * parameters and options.
  */
-class cuDSSConfig {
+class CUNLS_CUDSS_API cuDSSConfig {
  public:
   /** @brief Constructor that creates a cuDSS configuration object. */
   cuDSSConfig(int reordering_algorithm = 0, int nthreads = 1);
@@ -230,7 +231,7 @@ class cuDSSConfig {
  * This class manages a cuDSS data object that stores internal solver state
  * and working memory during the factorization and solve phases.
  */
-class cuDSSData {
+class CUNLS_CUDSS_API cuDSSData {
  public:
   cuDSSData() = default;
 

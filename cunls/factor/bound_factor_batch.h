@@ -21,6 +21,7 @@
 
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/constraint_factor_batch.h"
 
 namespace cunls {
@@ -29,10 +30,11 @@ namespace cunls {
  * @brief Launches the raw bound rows of BoundFactorBatch for `dim`-dimensional
  * states (see BoundFactorBatch for the layout).
  */
-void LaunchBoundConstraintKernel(const float *lower, const float *upper,
-                                 float const *const *state_pointers, float *values,
-                                 float *jacobians, int dim, size_t num_items, const int *factor_ids,
-                                 size_t num_factors, cudaStream_t stream);
+CUNLS_API void LaunchBoundConstraintKernel(const float *lower, const float *upper,
+                                           float const *const *state_pointers, float *values,
+                                           float *jacobians, int dim, size_t num_items,
+                                           const int *factor_ids, size_t num_factors,
+                                           cudaStream_t stream);
 
 /**
  * @brief Box constraints `lower <= x <= upper` on the components of a

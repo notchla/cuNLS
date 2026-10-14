@@ -7,6 +7,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -21,7 +22,7 @@ namespace cunls {
  *   H_left  = -J_l^{-1}(r) * Ad(Delta)
  *   H_right =  J_r^{-1}(r)
  */
-class Similarity2BetweenFactorBatch : public SizedFactorBatch<4, 4, 4> {
+class CUNLS_API Similarity2BetweenFactorBatch : public SizedFactorBatch<4, 4, 4> {
   using Base = SizedFactorBatch<4, 4, 4>;
 
  public:

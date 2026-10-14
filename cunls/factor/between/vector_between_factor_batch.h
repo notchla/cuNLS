@@ -7,6 +7,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -16,9 +17,11 @@ namespace cunls {
  * @brief Evaluates num_items vector between items; item t reads delta
  * factor_ids[t] (or t % num_factors when factor_ids is null).
  */
-void LaunchVectorBetweenFactorKernel(const float *deltas, float const *const *state_pointers,
-                                     float *residuals, float *jacobians, int dim, int num_items,
-                                     const int *factor_ids, int num_factors, cudaStream_t stream);
+CUNLS_API void LaunchVectorBetweenFactorKernel(const float *deltas,
+                                               float const *const *state_pointers, float *residuals,
+                                               float *jacobians, int dim, int num_items,
+                                               const int *factor_ids, int num_factors,
+                                               cudaStream_t stream);
 
 /**
  * @brief Euclidean between factor: residual = left - right - delta.

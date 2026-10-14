@@ -17,8 +17,10 @@
 
 #pragma once
 
-#include "cunls/robustifier/loss_function_batch.h"
 #include <cuda_runtime.h>
+
+#include "cunls/common/export.h"
+#include "cunls/robustifier/loss_function_batch.h"
 
 namespace cunls {
 
@@ -33,8 +35,8 @@ namespace cunls {
  *
  * The Cauchy loss is smooth and strongly down-weights large residuals.
  */
-class CauchyLossFunctionBatch : public LossFunctionBatch {
-public:
+class CUNLS_API CauchyLossFunctionBatch : public LossFunctionBatch {
+ public:
   /**
    * @brief Constructs a Cauchy loss with the given parameters.
    * @param b Scale parameter (b > 0).

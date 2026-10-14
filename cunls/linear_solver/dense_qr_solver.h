@@ -21,6 +21,7 @@
 
 #include "cunls/common/cublas_helper.h"
 #include "cunls/common/cusolver_helper.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/linear_solver/dense_linear_solver_base.h"
 
@@ -43,7 +44,7 @@ namespace cunls {
  * to SPD). Returns false from Solve() if the factorization reports an error
  * via devInfo.
  */
-class DenseQRSolver : public DenseLinearSolverBase {
+class CUNLS_API DenseQRSolver : public DenseLinearSolverBase {
  protected:
   /** @copydoc DenseLinearSolverBase::EnsureBuffersSize */
   void EnsureBuffersSize(cudaStream_t stream, size_t n) final;

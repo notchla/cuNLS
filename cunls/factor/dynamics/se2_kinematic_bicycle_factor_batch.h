@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/sized_factor_batch.h"
 
 namespace cunls {
@@ -45,7 +46,7 @@ namespace cunls {
  * slopes and ramps, SE3KinematicBicycleFactorBatch is the SE(3) variant (same
  * body twist).
  */
-class SE2KinematicBicycleFactorBatch : public SizedFactorBatch<5, 3, 2, 2, 3, 2> {
+class CUNLS_API SE2KinematicBicycleFactorBatch : public SizedFactorBatch<5, 3, 2, 2, 3, 2> {
  public:
   /**
    * @param time_steps Device array of `capacity` step durations dt_k [s].

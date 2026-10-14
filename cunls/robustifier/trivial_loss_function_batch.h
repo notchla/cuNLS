@@ -17,8 +17,10 @@
 
 #pragma once
 
-#include "cunls/robustifier/loss_function_batch.h"
 #include <cuda_runtime.h>
+
+#include "cunls/common/export.h"
+#include "cunls/robustifier/loss_function_batch.h"
 
 namespace cunls {
 
@@ -29,8 +31,8 @@ namespace cunls {
  * rho''(s) = 0. This is equivalent to standard least-squares without any
  * outlier down-weighting.
  */
-class TrivialLossFunctionBatch : public LossFunctionBatch {
-public:
+class CUNLS_API TrivialLossFunctionBatch : public LossFunctionBatch {
+ public:
   /**
    * @brief Evaluates the identity loss for a batch of squared residuals.
    * @copydetails LossFunctionBatch::Evaluate

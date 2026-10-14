@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/sized_factor_batch.h"
 
 namespace cunls {
@@ -38,7 +39,7 @@ namespace cunls {
  * Ad(Exp(-dt ξ)) (X_k), -dt J_l⁻¹(r) J_r(dt ξ) (ξ_k), J_r⁻¹(r) (X_{k+1}).
  * Camera / rigid-body motion with commanded body twists.
  */
-class SE3KinematicsFactorBatch : public SizedFactorBatch<6, 6, 6, 6> {
+class CUNLS_API SE3KinematicsFactorBatch : public SizedFactorBatch<6, 6, 6, 6> {
  public:
   /**
    * @param time_steps Device array of `capacity` step durations dt_k [s].

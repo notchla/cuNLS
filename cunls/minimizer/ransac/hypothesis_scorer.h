@@ -27,6 +27,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/minimizer/ransac/ransac_layout.h"
 #include "cunls/minimizer/ransac/slot_set.h"
@@ -46,7 +47,7 @@ namespace ransac_internal {
  * subset, then scores only the best finalists on all factors; every other
  * hypothesis gets +inf. Both stages apply the same inlier rules.
  */
-class HypothesisScorer {
+class CUNLS_API HypothesisScorer {
  public:
   void Allocate(const RansacLayout &layout, const RansacMinimizerOptions &options,
                 int num_hypotheses);

@@ -128,18 +128,21 @@ void ComputeConstantAccelerationSqrtInformation(cudaStream_t stream, const float
 
 // Explicit instantiations for the four supported pose tangent dimensions:
 // SE(3)=6, SE(2)/SO(3)=3, SO(2)=1.
-template void ComputeConstantVelocitySqrtInformation<6>(cudaStream_t, const float *, const float *,
-                                                        size_t, float *);
-template void ComputeConstantVelocitySqrtInformation<3>(cudaStream_t, const float *, const float *,
-                                                        size_t, float *);
-template void ComputeConstantVelocitySqrtInformation<1>(cudaStream_t, const float *, const float *,
-                                                        size_t, float *);
+template CUNLS_API void ComputeConstantVelocitySqrtInformation<6>(cudaStream_t, const float *,
+                                                                  const float *, size_t, float *);
+template CUNLS_API void ComputeConstantVelocitySqrtInformation<3>(cudaStream_t, const float *,
+                                                                  const float *, size_t, float *);
+template CUNLS_API void ComputeConstantVelocitySqrtInformation<1>(cudaStream_t, const float *,
+                                                                  const float *, size_t, float *);
 
-template void ComputeConstantAccelerationSqrtInformation<6>(cudaStream_t, const float *,
-                                                            const float *, size_t, float *);
-template void ComputeConstantAccelerationSqrtInformation<3>(cudaStream_t, const float *,
-                                                            const float *, size_t, float *);
-template void ComputeConstantAccelerationSqrtInformation<1>(cudaStream_t, const float *,
-                                                            const float *, size_t, float *);
+template CUNLS_API void ComputeConstantAccelerationSqrtInformation<6>(cudaStream_t, const float *,
+                                                                      const float *, size_t,
+                                                                      float *);
+template CUNLS_API void ComputeConstantAccelerationSqrtInformation<3>(cudaStream_t, const float *,
+                                                                      const float *, size_t,
+                                                                      float *);
+template CUNLS_API void ComputeConstantAccelerationSqrtInformation<1>(cudaStream_t, const float *,
+                                                                      const float *, size_t,
+                                                                      float *);
 
 }  // namespace cunls

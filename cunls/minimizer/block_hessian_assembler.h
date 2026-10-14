@@ -21,6 +21,7 @@
 
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/common/profiler.h"
 #include "cunls/common/types.h"
 #include "cunls/minimizer/hessian_structure.h"
@@ -58,7 +59,7 @@ class Problem;
  * CSR the address is `row_offsets[col_a + i] + write_offset(a,b) + j`; for BSR
  * the same offsets index tiles instead of entries.
  */
-class BlockHessianAssembler {
+class CUNLS_API BlockHessianAssembler {
  public:
   /**
    * @brief Builds the Hessian sparsity pattern and the per-factor scatter maps.

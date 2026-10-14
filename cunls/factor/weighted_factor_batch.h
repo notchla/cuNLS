@@ -22,6 +22,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "cunls/common/export.h"
 #include "cunls/common/log.h"
 #include "cunls/common/type_traits.h"
 
@@ -38,8 +39,8 @@ namespace cunls {
  * residual_size).
  * @param stream CUDA stream for asynchronous execution.
  */
-void ApplyUniformWeightToResiduals(float weight, float *residuals, size_t total_elements,
-                                   cudaStream_t stream);
+CUNLS_API void ApplyUniformWeightToResiduals(float weight, float *residuals, size_t total_elements,
+                                             cudaStream_t stream);
 
 /**
  * @brief Applies a uniform scalar weight to batched Jacobian matrices.
@@ -52,8 +53,8 @@ void ApplyUniformWeightToResiduals(float weight, float *residuals, size_t total_
  *        (num_factors * residual_size * jacobian_pitch).
  * @param stream CUDA stream for asynchronous execution.
  */
-void ApplyUniformWeightToJacobians(float weight, float *jacobians, size_t total_elements,
-                                   cudaStream_t stream);
+CUNLS_API void ApplyUniformWeightToJacobians(float weight, float *jacobians, size_t total_elements,
+                                             cudaStream_t stream);
 
 /**
  * @brief Applies per-factor scalar weights to batched residual vectors.
@@ -70,9 +71,10 @@ void ApplyUniformWeightToJacobians(float weight, float *jacobians, size_t total_
  * @param factor_ids Optional device array of per-item factor indices.
  * @param weights_size Number of weights; 0 means num_factors.
  */
-void ApplyPerFactorWeightToResiduals(const float *weights, float *residuals, size_t residual_size,
-                                     size_t num_factors, cudaStream_t stream,
-                                     const int *factor_ids = nullptr, size_t weights_size = 0);
+CUNLS_API void ApplyPerFactorWeightToResiduals(const float *weights, float *residuals,
+                                               size_t residual_size, size_t num_factors,
+                                               cudaStream_t stream, const int *factor_ids = nullptr,
+                                               size_t weights_size = 0);
 
 /**
  * @brief Applies per-factor scalar weights to batched Jacobian matrices.
@@ -91,9 +93,11 @@ void ApplyPerFactorWeightToResiduals(const float *weights, float *residuals, siz
  * @param factor_ids Optional device array of per-item factor indices.
  * @param weights_size Number of weights; 0 means num_factors.
  */
-void ApplyPerFactorWeightToJacobians(const float *weights, float *jacobians, size_t residual_size,
-                                     size_t jacobian_pitch, size_t num_factors, cudaStream_t stream,
-                                     const int *factor_ids = nullptr, size_t weights_size = 0);
+CUNLS_API void ApplyPerFactorWeightToJacobians(const float *weights, float *jacobians,
+                                               size_t residual_size, size_t jacobian_pitch,
+                                               size_t num_factors, cudaStream_t stream,
+                                               const int *factor_ids = nullptr,
+                                               size_t weights_size = 0);
 
 /**
  * @brief Wrapper factor that applies scalar weights to residuals and Jacobians.

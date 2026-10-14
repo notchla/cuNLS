@@ -19,6 +19,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -42,7 +43,7 @@ namespace cunls {
  *       transformation matrices and remain valid for the lifetime of this
  * object. Memory layout: [T0: 16 floats][T1: 16 floats]...[TN-1: 16 floats]
  */
-class SE3PriorFactorBatch : public SizedFactorBatch<6, 6> {
+class CUNLS_API SE3PriorFactorBatch : public SizedFactorBatch<6, 6> {
   using Base = SizedFactorBatch<6, 6>;
 
  public:

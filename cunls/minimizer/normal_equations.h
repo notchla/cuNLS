@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/linear_solver/sparse_linear_solver_base.h"
 #include "cunls/minimizer/block_hessian_assembler.h"
@@ -52,7 +53,7 @@ class Problem;
  * one-tile-per-entry BSR kernel cannot beat. Block storage is a win only when
  * the tiles are real.
  */
-class NormalEquations {
+class CUNLS_API NormalEquations {
  public:
   /**
    * @brief Derives the sparsity pattern and picks the storage layout.

@@ -19,6 +19,8 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
+
 namespace cunls {
 
 /**
@@ -30,7 +32,7 @@ namespace cunls {
  *
  * Non-copyable to prevent accidental sharing of stream ownership.
  */
-class CudaStream {
+class CUNLS_API CudaStream {
  public:
   /**
    * @brief Constructs a new CUDA stream.

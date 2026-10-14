@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/linear_solver/sparse_linear_solver_base.h"
 
@@ -65,7 +66,7 @@ namespace cunls {
  * - Stage blocks are limited to M <= 32 unknowns (one warp, one row per
  *   lane); larger stages would need a multi-warp variant.
  */
-class BlockTridiagonalSolver : public SparseLinearSolver {
+class CUNLS_API BlockTridiagonalSolver : public SparseLinearSolver {
  public:
   using SparseLinearSolver::Initialize;  // the BSR overloads: block storage is not supported
   using SparseLinearSolver::Solve;

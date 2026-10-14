@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -102,7 +103,7 @@ struct ImuParameters {
  * do), so small batches split chains over a warp and large batches give each
  * thread a whole chain.
  */
-class ImuFactorBatch : public SizedFactorBatch<15, 6, 3, 6, 6, 3, 6> {
+class CUNLS_API ImuFactorBatch : public SizedFactorBatch<15, 6, 3, 6, 6, 3, 6> {
  public:
   /**
    * @param imu_samples Device array of 7 floats per sample, (ω_x, ω_y, ω_z,

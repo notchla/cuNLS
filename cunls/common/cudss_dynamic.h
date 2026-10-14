@@ -28,6 +28,8 @@
 // pointer types does not require the symbols to be resolvable at link time.
 #include <cudss.h>
 
+#include "cunls/common/export.h"
+
 namespace cunls {
 
 /**
@@ -66,7 +68,7 @@ struct CudssApi {
  *
  * @return true if libcudss.so was found and every required symbol resolved.
  */
-bool cuDSSIsAvailable();
+CUNLS_API bool cuDSSIsAvailable();
 
 /**
  * @brief Returns the lazily dlopen()'d cuDSS function table.
@@ -81,6 +83,6 @@ bool cuDSSIsAvailable();
  *         message explaining how to fix it (e.g. add the matching cuDSS
  *         release's lib/ directory to LD_LIBRARY_PATH).
  */
-const CudssApi &GetCudssApi();
+CUNLS_API const CudssApi &GetCudssApi();
 
 }  // namespace cunls

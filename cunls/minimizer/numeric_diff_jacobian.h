@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/minimizer/jacobian_mode.h"
 
@@ -75,7 +76,7 @@ class MinimizerState;
  * residual batch -- it depends only on factor-graph connectivity, which is
  * static for the lifetime of a `Problem`/minimizer run.
  */
-class NumericDiffJacobianBuilder {
+class CUNLS_API NumericDiffJacobianBuilder {
  public:
   NumericDiffJacobianBuilder();
   ~NumericDiffJacobianBuilder();
@@ -175,7 +176,7 @@ class NumericDiffJacobianBuilder {
    * hold (e.g. structure changed via a fresh `PrepareResidualBatch`, or the
    * caller passed a `MinimizerState` backed by different buffers).
    */
-  struct ComputeCache {
+  struct CUNLS_API ComputeCache {
     bool uploaded = false;
     bool central = false;
     float step_size = 0.0f;

@@ -21,10 +21,29 @@ project(cunls VERSION 0.2 LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 option(BUILD_TESTING OFF)
+
+if(MSVC)
+  # /Zc:preprocessor is required by CCCL; /utf-8 because sources contain non-ASCII text.
+  add_compile_definitions(NOMINMAX WIN32_LEAN_AND_MEAN)
+  add_compile_options(
+    "$<$<COMPILE_LANGUAGE:CXX>:/utf-8;/Zc:preprocessor;/Zc:__cplusplus;/permissive-;/bigobj>"
+    "$<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=/utf-8,/Zc:preprocessor,/Zc:__cplusplus,/bigobj>")
+endif()
 option(BUILD_SHARED_LIBS "Build shared library (OFF for static)" ON)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+option(CUNLS_HIDDEN_VISIBILITY
+  "Export only symbols marked CUNLS_API, as the Windows DLL does" ON)
+# Set before the dependencies are fetched so the bundled spdlog/fmt symbols are hidden too.
+if(CUNLS_HIDDEN_VISIBILITY)
+  set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+  set(CMAKE_CUDA_VISIBILITY_PRESET hidden)
+  set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+endif()
 
 find_package(CUDAToolkit REQUIRED)
 
@@ -74,6 +93,14 @@ include_directories(
 # Add submodules
 add_subdirectory(cunls)
 
+# The sources compile in these object libraries, not in the cunls target, so
+# the export macros (cunls/common/export.h) are configured here.
+foreach(_cunls_object_lib IN LISTS CUNLS_OBJECT_LIBS)
+  target_compile_definitions(${_cunls_object_lib} PRIVATE CUNLS_BUILDING
+    $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:CUNLS_STATIC>
+    $<$<BOOL:${CUNLS_ENABLE_CUDSS}>:CUNLS_ENABLE_CUDSS>)
+endforeach()
+
 # Build library from object libraries (SHARED or STATIC per BUILD_SHARED_LIBS)
 add_library(cunls
   $<TARGET_OBJECTS:cunls_common>
@@ -103,6 +130,15 @@ foreach(_cunls_cuda_include_dir IN LISTS CUDAToolkit_INCLUDE_DIRS)
 endforeach()
 
 add_library(cunls::cunls ALIAS cunls)
+
+if(NOT BUILD_SHARED_LIBS)
+  target_compile_definitions(cunls PUBLIC CUNLS_STATIC)
+endif()
+
+# Public headers include CCCL, which rejects MSVC's traditional preprocessor.
+target_compile_options(cunls INTERFACE
+  "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/Zc:preprocessor>"
+  "$<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CXX_COMPILER_ID:MSVC>>:-Xcompiler=/Zc:preprocessor>")
 
 target_link_libraries(cunls
   PUBLIC CUDA::cudart
@@ -138,8 +174,12 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 if(BUILD_SHARED_LIBS)
+  # On Windows the DLL is a RUNTIME output (its import library an ARCHIVE one)
+  # and must sit next to the test executables.
   set_target_properties(cunls PROPERTIES
-      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 else()
   set_target_properties(cunls PROPERTIES
       ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
@@ -156,6 +196,7 @@ if(NOT BUILD_PYTHON_BINDINGS)
     EXPORT cunlsTargets
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
     INCLUDES DESTINATION include
   )
 

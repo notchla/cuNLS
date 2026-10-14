@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/sized_factor_batch.h"
 
 namespace cunls {
@@ -46,7 +47,7 @@ namespace cunls {
  * non-planar terrain, SE3DifferentialDriveFactorBatch is the SE(3) variant
  * (same twist in the body frame).
  */
-class SE2DifferentialDriveFactorBatch : public SizedFactorBatch<3, 3, 2, 3> {
+class CUNLS_API SE2DifferentialDriveFactorBatch : public SizedFactorBatch<3, 3, 2, 3> {
  public:
   /**
    * @param time_steps Device array of `capacity` step durations dt_k [s].

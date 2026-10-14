@@ -7,6 +7,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -20,7 +21,7 @@ namespace cunls {
  * SO3BetweenFactorBatch: zero at R_right = R_left * R_delta^T.
  * Since SO(2) is abelian, Jacobians are exact: H_left = -1, H_right = 1.
  */
-class SO2BetweenFactorBatch : public SizedFactorBatch<1, 1, 1> {
+class CUNLS_API SO2BetweenFactorBatch : public SizedFactorBatch<1, 1, 1> {
   using Base = SizedFactorBatch<1, 1, 1>;
 
  public:

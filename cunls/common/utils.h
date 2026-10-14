@@ -19,6 +19,7 @@
 
 #include <string>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 
 namespace cunls {
@@ -40,7 +41,8 @@ namespace cunls {
  * @param filename Path to the output binary file (created or appended to).
  * @param matrix   The CSR sparse matrix to dump.
  */
-void DumpCSRSparseMatrixToFile(const std::string &filename, const CSRSparseMatrix &matrix);
+CUNLS_API void DumpCSRSparseMatrixToFile(const std::string &filename,
+                                         const CSRSparseMatrix &matrix);
 
 /**
  * @brief Dumps a device vector to a binary file for debugging/analysis.
@@ -55,6 +57,6 @@ void DumpCSRSparseMatrixToFile(const std::string &filename, const CSRSparseMatri
  * @param filename Path to the output binary file (created or appended to).
  * @param vector   The device vector to dump.
  */
-void DumpVectorToFile(const std::string &filename, const dvector<float> &vector);
+CUNLS_API void DumpVectorToFile(const std::string &filename, const dvector<float> &vector);
 
 }  // namespace cunls

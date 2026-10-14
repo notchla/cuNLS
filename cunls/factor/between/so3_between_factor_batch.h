@@ -7,6 +7,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -22,7 +23,7 @@ namespace cunls {
  * SO(3) adjoint Ad(R) = R. These follow from SO3StateBatch::Plus applying a
  * right-multiplicative local update (X' = X * Exp(eps)).
  */
-class SO3BetweenFactorBatch : public SizedFactorBatch<3, 3, 3> {
+class CUNLS_API SO3BetweenFactorBatch : public SizedFactorBatch<3, 3, 3> {
   using Base = SizedFactorBatch<3, 3, 3>;
 
  public:

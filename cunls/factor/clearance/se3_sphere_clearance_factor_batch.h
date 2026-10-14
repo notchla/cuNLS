@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/sized_factor_batch.h"
 
 namespace cunls {
@@ -37,7 +38,7 @@ namespace cunls {
  * (SE3StateBatch). Jacobian: -(p - center)ᵀ R / ‖p - center‖ on the translation part
  * of the tangent, 0 on the rotation part (0 when p is at the center).
  */
-class SE3SphereClearanceFactorBatch : public SizedFactorBatch<1, 6> {
+class CUNLS_API SE3SphereClearanceFactorBatch : public SizedFactorBatch<1, 6> {
  public:
   /**
    * @param obstacles Device array of 4 floats per factor: the center

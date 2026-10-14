@@ -37,6 +37,8 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "cunls/common/export.h"
+
 namespace cunls {
 namespace ransac_internal {
 
@@ -188,8 +190,8 @@ __host__ __device__ inline uint32_t PermuteIndex(uint32_t index, uint32_t n, uin
  * concatenated sampled factors, samples[p * sample_size + t] =
  * PermuteIndex(t, n, PermutationKey(seed, round, p)).
  */
-void LaunchDrawSamples(cudaStream_t stream, int n, int sample_size, int num_slots, uint64_t seed,
-                       uint64_t round, int *samples);
+CUNLS_API void LaunchDrawSamples(cudaStream_t stream, int n, int sample_size, int num_slots,
+                                 uint64_t seed, uint64_t round, int *samples);
 
 // ---------------------------------------------------------------------------
 // State-pointer tables and replicas (slot_kernels.cu)
@@ -202,43 +204,45 @@ void LaunchDrawSamples(cudaStream_t stream, int n, int sample_size, int num_slot
  * evaluates factor u - u_offset against replica p (current or candidate);
  * otherwise it evaluates factor 0 and its row is ignored.
  */
-void LaunchSampleTables(cudaStream_t stream, const StateView *states, const int2 *blocks, int nb,
-                        int num_factors, int u_offset, const int *samples, int sample_size,
-                        int num_slots, bool candidate, float **table, int *factor_ids);
+CUNLS_API void LaunchSampleTables(cudaStream_t stream, const StateView *states, const int2 *blocks,
+                                  int nb, int num_factors, int u_offset, const int *samples,
+                                  int sample_size, int num_slots, bool candidate, float **table,
+                                  int *factor_ids);
 
 /**
  * @brief num_slots pointer tables: local slot p evaluates every factor against
  * replica `slot_offset + p`.
  */
-void LaunchSlotTables(cudaStream_t stream, const StateView *states, const int2 *blocks,
-                      int num_factors, int nb, int num_slots, int slot_offset, bool candidate,
-                      float **tables);
+CUNLS_API void LaunchSlotTables(cudaStream_t stream, const StateView *states, const int2 *blocks,
+                                int num_factors, int nb, int num_slots, int slot_offset,
+                                bool candidate, float **tables);
 
 /**
  * @brief Pointer tables for slots listed in slot_index: local slot p evaluates
  * every factor against replica slot_index[p].
  */
-void LaunchIndexedSlotTables(cudaStream_t stream, const StateView *states, const int2 *blocks,
-                             int num_factors, int nb, const int *slot_index, int num_slots,
-                             float **tables);
+CUNLS_API void LaunchIndexedSlotTables(cudaStream_t stream, const StateView *states,
+                                       const int2 *blocks, int num_factors, int nb,
+                                       const int *slot_index, int num_slots, float **tables);
 
 /**
  * @brief Tables and factor ids for evaluating a factor subset: item
  * t = p * count + j evaluates factor ids[j] against replica slot_offset + p.
  */
-void LaunchSubsetTables(cudaStream_t stream, const StateView *states, const int2 *blocks, int nb,
-                        const int *ids, int count, int num_slots, int slot_offset, float **tables,
-                        int *item_ids);
+CUNLS_API void LaunchSubsetTables(cudaStream_t stream, const StateView *states, const int2 *blocks,
+                                  int nb, const int *ids, int count, int num_slots, int slot_offset,
+                                  float **tables, int *item_ids);
 
 /** @brief ids[j] = the j-th element of a keyed permutation of [0, n), j < count. */
-void LaunchPermutationPrefix(cudaStream_t stream, int n, int count, uint64_t key, int *ids);
+CUNLS_API void LaunchPermutationPrefix(cudaStream_t stream, int n, int count, uint64_t key,
+                                       int *ids);
 
 /** @brief out[j * nb + b] = local_col[ids[j] * nb + b]. */
-void LaunchGatherLocalColumns(cudaStream_t stream, const int *local_col, const int *ids, int count,
-                              int nb, int *out);
+CUNLS_API void LaunchGatherLocalColumns(cudaStream_t stream, const int *local_col, const int *ids,
+                                        int count, int nb, int *out);
 
 /** @brief data[i] = value for i < n. */
-void LaunchFill(cudaStream_t stream, float *data, size_t n, float value);
+CUNLS_API void LaunchFill(cudaStream_t stream, float *data, size_t n, float value);
 
 /**
  * @brief Expands per-slot local steps into one state batch's full tangent
@@ -246,20 +250,22 @@ void LaunchFill(cudaStream_t stream, float *data, size_t n, float value);
  *
  * @param block_col num_blocks entries: local column of each state or -1.
  */
-void LaunchScatterDelta(cudaStream_t stream, int num_slots, int dim, const float *delta,
-                        int num_blocks, int tangent, const int *block_col, float *delta_full);
+CUNLS_API void LaunchScatterDelta(cudaStream_t stream, int num_slots, int dim, const float *delta,
+                                  int num_blocks, int tangent, const int *block_col,
+                                  float *delta_full);
 
 /** @brief cur[p] = cand[p] for the slots with accept[p] != 0. */
-void LaunchCopyAccepted(cudaStream_t stream, int num_slots, size_t slot_floats, const int *accept,
-                        const float *cand, float *cur);
+CUNLS_API void LaunchCopyAccepted(cudaStream_t stream, int num_slots, size_t slot_floats,
+                                  const int *accept, const float *cand, float *cur);
 
 /**
  * @brief Broadcasts one source replica: dst slot p = src slot s for every p in
  * [0, num_slots), where s = *src_slot (device) or 0 when src_slot is null.
  * When only_if is given and *only_if == 0, nothing is copied.
  */
-void LaunchCopyReplicas(cudaStream_t stream, int num_slots, size_t slot_floats, const float *src,
-                        const int *src_slot, const int *only_if, float *dst);
+CUNLS_API void LaunchCopyReplicas(cudaStream_t stream, int num_slots, size_t slot_floats,
+                                  const float *src, const int *src_slot, const int *only_if,
+                                  float *dst);
 
 // ---------------------------------------------------------------------------
 // Per-slot Gauss-Newton / LM step (normal_equations_kernels.cu,
@@ -277,8 +283,8 @@ enum class SlotGroup {
  * @brief Scratch floats LaunchNormalEquations needs for these items: nonzero
  * when a slot has so many rows that it is split across several blocks.
  */
-size_t NormalEquationsScratchFloats(const SlotItems &items, int num_slots, int dim,
-                                    SlotGroup group = SlotGroup::kAuto);
+CUNLS_API size_t NormalEquationsScratchFloats(const SlotItems &items, int num_slots, int dim,
+                                              SlotGroup group = SlotGroup::kAuto);
 
 /**
  * @brief Per-slot normal equations H = J^T J (dim x dim, full), g = -J^T r,
@@ -288,19 +294,19 @@ size_t NormalEquationsScratchFloats(const SlotItems &items, int num_slots, int d
  *        when that is 0).
  * @param group kWarp is honored only for systems small enough for a warp.
  */
-void LaunchNormalEquations(cudaStream_t stream, const SlotItems &items, int num_slots, int dim,
-                           float *hessian, float *gradient, float *cost, float *scratch,
-                           SlotGroup group = SlotGroup::kAuto);
+CUNLS_API void LaunchNormalEquations(cudaStream_t stream, const SlotItems &items, int num_slots,
+                                     int dim, float *hessian, float *gradient, float *cost,
+                                     float *scratch, SlotGroup group = SlotGroup::kAuto);
 
 /** @brief Scratch floats LaunchSlotCost needs to split large slots across blocks. */
-size_t SlotCostScratchFloats(const SlotItems &items, int num_slots);
+CUNLS_API size_t SlotCostScratchFloats(const SlotItems &items, int num_slots);
 
 /**
  * @brief Per-slot sum of item costs. Large slots are split across blocks when
  * scratch (SlotCostScratchFloats()) is given; the partials are added in order.
  */
-void LaunchSlotCost(cudaStream_t stream, const SlotItems &items, int num_slots, float *cost,
-                    float *scratch, SlotGroup group = SlotGroup::kAuto);
+CUNLS_API void LaunchSlotCost(cudaStream_t stream, const SlotItems &items, int num_slots,
+                              float *cost, float *scratch, SlotGroup group = SlotGroup::kAuto);
 
 /** @brief Dense solvers, mirroring RansacLinearSolverType. */
 enum SolverKind : int { kSolveCholesky = 0, kSolveLDLT = 1 };
@@ -315,9 +321,10 @@ enum SolverKind : int { kSolveCholesky = 0, kSolveLDLT = 1 };
  * step. Inactive slots get a zero step. Also writes the predicted decrease
  * g^T delta - 0.5 delta^T H delta (undamped H), |delta|^2, and solve_ok.
  */
-void LaunchSolve(cudaStream_t stream, int num_slots, int dim, SolverKind solver,
-                 const float *hessian, const float *gradient, const float *lambda,
-                 const int *active, float *delta, float *predicted, float *step_sq, int *solve_ok);
+CUNLS_API void LaunchSolve(cudaStream_t stream, int num_slots, int dim, SolverKind solver,
+                           const float *hessian, const float *gradient, const float *lambda,
+                           const int *active, float *delta, float *predicted, float *step_sq,
+                           int *solve_ok);
 
 /**
  * @brief Accept / reject per slot; updates active flags and lambda.
@@ -325,20 +332,21 @@ void LaunchSolve(cudaStream_t stream, int num_slots, int dim, SolverKind solver,
  * iterations[p] counts calls made while the slot was active. On a slot's
  * first such call, valid[p] (if given) is set to solve_ok[p].
  */
-void LaunchAccept(cudaStream_t stream, int num_slots, const DevicePolicy &policy,
-                  const float *cost_cur, const float *cost_cand, const float *predicted,
-                  const float *step_sq, const int *solve_ok, int *active, float *lambda,
-                  int *accept, int *valid, int *iterations, int *num_accepted);
+CUNLS_API void LaunchAccept(cudaStream_t stream, int num_slots, const DevicePolicy &policy,
+                            const float *cost_cur, const float *cost_cand, const float *predicted,
+                            const float *step_sq, const int *solve_ok, int *active, float *lambda,
+                            int *accept, int *valid, int *iterations, int *num_accepted);
 
 /** @brief *count = number of slots with active[p] != 0 (one block, deterministic). */
-void LaunchCountActive(cudaStream_t stream, int num_slots, const int *active, int *count);
+CUNLS_API void LaunchCountActive(cudaStream_t stream, int num_slots, const int *active, int *count);
 
 /**
  * @brief Resets per-slot solver state: active = 1, lambda = initial, valid = 1
  * (if given), iteration and accept counters = 0.
  */
-void LaunchResetSlots(cudaStream_t stream, int num_slots, float initial_lambda, int *active,
-                      float *lambda, int *valid, int *iterations, int *num_accepted);
+CUNLS_API void LaunchResetSlots(cudaStream_t stream, int num_slots, float initial_lambda,
+                                int *active, float *lambda, int *valid, int *iterations,
+                                int *num_accepted);
 
 // ---------------------------------------------------------------------------
 // Scoring and selection (scoring_kernels.cu)
@@ -366,7 +374,7 @@ struct ScoreInputs {
 };
 
 /** @brief Scratch floats LaunchScore needs for `num_slots` slots. */
-size_t ScoreScratchFloats(int total_sampled, int num_slots);
+CUNLS_API size_t ScoreScratchFloats(int total_sampled, int num_slots);
 
 /**
  * @brief Scores slots [0, num_slots). Sampled views are indexed by the local
@@ -377,9 +385,9 @@ size_t ScoreScratchFloats(int total_sampled, int num_slots);
  * their partial sums (ScoreScratchFloats()). With slot_index, the global index
  * of local slot p is slot_index[p] instead of slot_offset + p.
  */
-void LaunchScore(cudaStream_t stream, const ScoreInputs &inputs, int num_slots, int slot_offset,
-                 const int *valid, float *score, int *inliers, uint8_t *mask, float *scratch,
-                 const int *slot_index = nullptr);
+CUNLS_API void LaunchScore(cudaStream_t stream, const ScoreInputs &inputs, int num_slots,
+                           int slot_offset, const int *valid, float *score, int *inliers,
+                           uint8_t *mask, float *scratch, const int *slot_index = nullptr);
 
 /**
  * @brief Picks the top_m (<= 64) lowest scores (NaN = +inf, ties to the lower
@@ -387,11 +395,12 @@ void LaunchScore(cudaStream_t stream, const ScoreInputs &inputs, int num_slots, 
  * slots (if valid is given). stats->improved is 1 iff the minimum beats
  * stats->best_score.
  */
-void LaunchSelect(cudaStream_t stream, const float *score, const int *inliers, const int *valid,
-                  int num_slots, int top_m, int *top_indices, DeviceStats *stats);
+CUNLS_API void LaunchSelect(cudaStream_t stream, const float *score, const int *inliers,
+                            const int *valid, int num_slots, int top_m, int *top_indices,
+                            DeviceStats *stats);
 
 /** @brief Initializes device statistics (best score = +inf). */
-void LaunchInitStats(cudaStream_t stream, DeviceStats *stats);
+CUNLS_API void LaunchInitStats(cudaStream_t stream, DeviceStats *stats);
 
 }  // namespace ransac_internal
 }  // namespace cunls

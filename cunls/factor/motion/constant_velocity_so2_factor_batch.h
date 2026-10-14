@@ -19,6 +19,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -36,7 +37,7 @@ namespace cunls {
  *
  * Inherits from SizedFactorBatch<2, 1, 1, 1, 1>.
  */
-class ConstantVelocitySO2FactorBatch : public SizedFactorBatch<2, 1, 1, 1, 1> {
+class CUNLS_API ConstantVelocitySO2FactorBatch : public SizedFactorBatch<2, 1, 1, 1, 1> {
  public:
   ConstantVelocitySO2FactorBatch(const float *dt_ptr, size_t capacity);
 

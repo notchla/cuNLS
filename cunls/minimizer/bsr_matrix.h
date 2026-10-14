@@ -21,6 +21,7 @@
 
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 
 namespace cunls {
@@ -44,7 +45,7 @@ class Problem;
  * @param max_block_size Upper bound on the returned edge length.
  * @return The tile edge, or 1 when block storage is not worthwhile.
  */
-int ChooseHessianBlockSize(const Problem &problem, int max_block_size = 16);
+CUNLS_API int ChooseHessianBlockSize(const Problem &problem, int max_block_size = 16);
 
 /**
  * @brief Extracts the main diagonal of a BSR matrix.
@@ -53,7 +54,8 @@ int ChooseHessianBlockSize(const Problem &problem, int max_block_size = 16);
  * @param matrix BSR matrix.
  * @param[out] diagonal Output of length matrix.NumRows().
  */
-void ExtractDiagonal(cudaStream_t stream, const BSRSparseMatrix &matrix, dvector<float> &diagonal);
+CUNLS_API void ExtractDiagonal(cudaStream_t stream, const BSRSparseMatrix &matrix,
+                               dvector<float> &diagonal);
 
 /**
  * @brief Computes result = matrix + scale * diag(diagonal) for BSR storage.
@@ -64,8 +66,8 @@ void ExtractDiagonal(cudaStream_t stream, const BSRSparseMatrix &matrix, dvector
  * @param matrix Input BSR matrix.
  * @param[out] result Output BSR matrix; may alias @p matrix for in-place.
  */
-void AddScaledDiagonal(cudaStream_t stream, float scale, const dvector<float> &diagonal,
-                       const BSRSparseMatrix &matrix, BSRSparseMatrix &result);
+CUNLS_API void AddScaledDiagonal(cudaStream_t stream, float scale, const dvector<float> &diagonal,
+                                 const BSRSparseMatrix &matrix, BSRSparseMatrix &result);
 
 /**
  * @brief Symmetric diagonal scaling: A_ij *= scale[i] * scale[j].
@@ -76,8 +78,8 @@ void AddScaledDiagonal(cudaStream_t stream, float scale, const dvector<float> &d
  * @param[out] row_of_tile Caller-owned scratch mapping tile index to block row;
  *        resized as needed and rebuilt on each call.
  */
-void ScaleSymmetric(cudaStream_t stream, BSRSparseMatrix &matrix, const dvector<float> &scale,
-                    dvector<int> &row_of_tile);
+CUNLS_API void ScaleSymmetric(cudaStream_t stream, BSRSparseMatrix &matrix,
+                              const dvector<float> &scale, dvector<int> &row_of_tile);
 
 /**
  * @brief Deep-copies a BSR matrix (structure and values).
@@ -89,11 +91,11 @@ void ScaleSymmetric(cudaStream_t stream, BSRSparseMatrix &matrix, const dvector<
  * @param input Source matrix.
  * @param[out] output Destination matrix.
  */
-void CopyBSRSparseMatrix(cudaStream_t stream, const BSRSparseMatrix &input,
-                         BSRSparseMatrix &output);
+CUNLS_API void CopyBSRSparseMatrix(cudaStream_t stream, const BSRSparseMatrix &input,
+                                   BSRSparseMatrix &output);
 
 /** @brief y = A * x for block storage (y is resized to the row count). */
-void MultiplyBSRByDenseVector(cudaStream_t stream, const BSRSparseMatrix &matrix,
-                              const dvector<float> &x, dvector<float> &y);
+CUNLS_API void MultiplyBSRByDenseVector(cudaStream_t stream, const BSRSparseMatrix &matrix,
+                                        const dvector<float> &x, dvector<float> &y);
 
 }  // namespace cunls

@@ -21,6 +21,7 @@
 
 #include <memory>
 
+#include "cunls/common/export.h"
 #include "cunls/linear_solver/block_sparse_pcg_solver.h"
 #include "cunls/linear_solver/block_tridiagonal_solver.h"
 #include "cunls/linear_solver/cudss_sparse_linear_solver.h"
@@ -84,7 +85,7 @@ using SparseLinearSolverPtr = std::unique_ptr<SparseLinearSolver>;
  * @param config Solver-specific configuration options.
  * @return A unique pointer to the created solver instance.
  */
-SparseLinearSolverPtr CreateSparseLinearSolver(SparseLinearSolverType type,
-                                               const SparseLinearSolverConfig &config);
+CUNLS_API SparseLinearSolverPtr CreateSparseLinearSolver(SparseLinearSolverType type,
+                                                         const SparseLinearSolverConfig &config);
 
 }  // namespace cunls

@@ -19,6 +19,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -46,7 +47,7 @@ namespace cunls {
  *   - 6, 6: pose_k, pose_{k+1} tangent size (SE(3))
  *   - 6, 6: vel_k, vel_{k+1} size (R^6 body twist)
  */
-class ConstantVelocitySE3FactorBatch : public SizedFactorBatch<12, 6, 6, 6, 6> {
+class CUNLS_API ConstantVelocitySE3FactorBatch : public SizedFactorBatch<12, 6, 6, 6, 6> {
  public:
   /**
    * @brief Constructs a batch of SE(3) constant-velocity factors.

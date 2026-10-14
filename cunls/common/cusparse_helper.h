@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/helper.h"
 #include "cunls/common/types.h"
 
@@ -30,7 +31,7 @@ namespace cunls {
  * @param status The cuSPARSE status code to convert.
  * @return A string describing the status code.
  */
-const char *cusparseGetErrorString(int status);
+CUNLS_API const char *cusparseGetErrorString(int status);
 
 /**
  * @brief Macro to check cuSPARSE status and throw an exception on error
@@ -60,7 +61,7 @@ const char *cusparseGetErrorString(int status);
  * destroyed when the object goes out of scope or when a different stream is
  * requested.
  */
-class cuSPARSEHandle {
+class CUNLS_API cuSPARSEHandle {
  public:
   /**
    * @brief Default constructor
@@ -106,7 +107,7 @@ class cuSPARSEHandle {
  * matrices and allows updating matrix data pointers without recreating the
  * descriptor.
  */
-class cuSPARSEMatrixDescription {
+class CUNLS_API cuSPARSEMatrixDescription {
  public:
   /**
    * @brief Default constructor
@@ -197,7 +198,7 @@ class cuSPARSEMatrixDescription {
  * automatic memory management. It's designed to work with device vectors
  * of float values and is commonly used in sparse matrix-vector operations.
  */
-class cuSPARSEVectorDescription {
+class CUNLS_API cuSPARSEVectorDescription {
  public:
   /**
    * @brief Constructor from device vector

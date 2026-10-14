@@ -19,6 +19,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -45,7 +46,7 @@ namespace cunls {
  *
  * Inherits from SizedFactorBatch<18, 6, 6, 6, 6, 6, 6>.
  */
-class ConstantAccelerationSE3FactorBatch : public SizedFactorBatch<18, 6, 6, 6, 6, 6, 6> {
+class CUNLS_API ConstantAccelerationSE3FactorBatch : public SizedFactorBatch<18, 6, 6, 6, 6, 6, 6> {
  public:
   /**
    * @param dt_ptr Device pointer to per-factor time deltas, not owned.

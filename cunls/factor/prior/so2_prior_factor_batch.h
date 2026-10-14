@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "cunls/common/export.h"
 #include "cunls/common/helper.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
@@ -41,7 +42,7 @@ namespace cunls {
  *       Memory layout: [R0: 4 floats][R1: 4 floats]...[RN-1: 4 floats]
  *       Each rotation is stored row-major: [cos, -sin, sin, cos]
  */
-class SO2PriorFactorBatch : public SizedFactorBatch<1, 1> {
+class CUNLS_API SO2PriorFactorBatch : public SizedFactorBatch<1, 1> {
   using Base = SizedFactorBatch<1, 1>;
 
  public:

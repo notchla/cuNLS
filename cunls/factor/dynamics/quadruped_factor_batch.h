@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/sized_factor_batch.h"
 
 namespace cunls {
@@ -55,7 +56,7 @@ struct QuadrupedParameters {
  * model. Contact constraints (unilateral normal force, friction cone, zero
  * force in swing) are separate constraint factors.
  */
-class QuadrupedFactorBatch : public SizedFactorBatch<12, 6, 3, 3, 12, 6, 3, 3> {
+class CUNLS_API QuadrupedFactorBatch : public SizedFactorBatch<12, 6, 3, 3, 12, 6, 3, 3> {
  public:
   /**
    * @param time_steps Device array of `capacity` step durations dt_k [s].

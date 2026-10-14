@@ -18,6 +18,7 @@
 #pragma once
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -38,7 +39,7 @@ namespace cunls {
  *   - 2: Residual dimension
  *   - 6: SE(3) pose tangent
  */
-class PnPFactorBatch : public SizedFactorBatch<2, 6> {
+class CUNLS_API PnPFactorBatch : public SizedFactorBatch<2, 6> {
  public:
   /**
    * @brief Constructs with identity camera-from-rig extrinsics.

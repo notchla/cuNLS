@@ -18,6 +18,7 @@
 #pragma once
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/state/sized_state_batch.h"
 
@@ -34,7 +35,7 @@ namespace cunls {
  * The class uses GPU-accelerated operations via fused CUDA kernels
  * for efficient batch processing of multiple transformations.
  */
-class SE3StateBatch : public SizedStateBatch<16, 6> {
+class CUNLS_API SE3StateBatch : public SizedStateBatch<16, 6> {
  public:
   using Base = SizedStateBatch<16, 6>;
 

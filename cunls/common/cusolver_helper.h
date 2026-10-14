@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/helper.h"
 #include "cunls/common/log.h"
 
@@ -30,7 +31,7 @@ namespace cunls {
  * @param status The cuSolver status code to convert
  * @return C-string containing the error message
  */
-const char *cusolverGetErrorString(int status);
+CUNLS_API const char *cusolverGetErrorString(int status);
 
 /**
  * @brief Macro that throws an exception if cuSolver operation fails.
@@ -55,7 +56,7 @@ const char *cusolverGetErrorString(int status);
  * on construction and destroyed on destruction. The handle is associated with
  * a specific CUDA stream when GetHandle is called.
  */
-class cuSolverHandle {
+class CUNLS_API cuSolverHandle {
  public:
   /// Constructs a cuSolver handle (handle is created lazily on first GetHandle
   /// call)
@@ -97,7 +98,7 @@ class cuSolverHandle {
  * Manages the lifecycle of an info object used for batched
  * symmetric eigenvalue decomposition.
  */
-class cuSolverInfo {
+class CUNLS_API cuSolverInfo {
  public:
   /// Constructs a cuSolver info object
   cuSolverInfo();

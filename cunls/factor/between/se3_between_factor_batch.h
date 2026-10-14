@@ -19,6 +19,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -45,7 +46,7 @@ namespace cunls {
  *       valid for the lifetime of this object. The memory layout is:
  *       [delta0: 16 floats][delta1: 16 floats]...[deltaN-1: 16 floats]
  */
-class SE3BetweenFactorBatch : public SizedFactorBatch<6, 6, 6> {
+class CUNLS_API SE3BetweenFactorBatch : public SizedFactorBatch<6, 6, 6> {
   using Base = SizedFactorBatch<6, 6, 6>;
 
  public:

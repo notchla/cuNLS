@@ -19,6 +19,7 @@
 
 #include <cuda/std/array>
 
+#include "cunls/common/export.h"
 #include "cunls/common/helper.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
@@ -55,7 +56,7 @@ namespace cunls {
  *       for the lifetime of this object. The memory layout for each is:
  *       [vec0: 3 floats][vec1: 3 floats]...[vecN-1: 3 floats]
  */
-class SymmetricPointToPlaneFactorBatch : public SizedFactorBatch<1, 6> {
+class CUNLS_API SymmetricPointToPlaneFactorBatch : public SizedFactorBatch<1, 6> {
   using Base = SizedFactorBatch<1, 6>;
   using Vector3 = Vector<3>;
 

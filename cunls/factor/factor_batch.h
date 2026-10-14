@@ -22,6 +22,8 @@
 #include <string>
 #include <vector>
 
+#include "cunls/common/export.h"
+
 namespace cunls {
 
 /**
@@ -37,7 +39,7 @@ namespace cunls {
  * @see SizedFactorBatch for a convenience base that fixes residual and
  *      state sizes at compile time.
  */
-class FactorBatch {
+class CUNLS_API FactorBatch {
  public:
   /**
    * @brief Evaluates residuals and, optionally, Jacobians for a list of items.

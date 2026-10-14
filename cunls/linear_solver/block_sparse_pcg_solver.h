@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "cunls/common/cusparse_helper.h"
+#include "cunls/common/export.h"
 #include "cunls/linear_solver/sparse_linear_solver_base.h"
 
 namespace cunls {
@@ -155,7 +156,7 @@ struct BlockSparsePCGOptions {
  *    on every @ref Solve (cheap: one CTA per tile reads a few floats
  *    and does a small LDLT entirely in shared memory).
  */
-class BlockSparsePCGSolver : public SparseLinearSolver {
+class CUNLS_API BlockSparsePCGSolver : public SparseLinearSolver {
  public:
   /**
    * @brief Constructs the solver with the given options.

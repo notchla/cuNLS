@@ -27,6 +27,8 @@
 
 #include <cstddef>
 
+#include "cunls/common/export.h"
+
 namespace cunls {
 namespace problem_internal {
 
@@ -44,8 +46,8 @@ struct SlotTable {
  * @brief out[t] = base[b] + indices[t] * ambient[b] for t < count, b = t % num_slots.
  * Out-of-range indices produce out-of-range pointers, which validation reports.
  */
-void LaunchExpandIndices(cudaStream_t stream, const int *indices, size_t count,
-                         const SlotTable &slots, float **out);
+CUNLS_API void LaunchExpandIndices(cudaStream_t stream, const int *indices, size_t count,
+                                   const SlotTable &slots, float **out);
 
 /** @brief Active range of one state batch, for validation. */
 struct StateRange {
@@ -75,17 +77,17 @@ struct SlotTangents {
  * the start of an active state of a state batch whose tangent size matches the
  * slot's; marks used[range.used_offset + state] = 1.
  */
-void LaunchCheckPointers(cudaStream_t stream, float *const *pointers, size_t count, int batch,
-                         const SlotTangents &slots, const StateRange *ranges, int num_ranges,
-                         int *used, ValidationError *error);
+CUNLS_API void LaunchCheckPointers(cudaStream_t stream, float *const *pointers, size_t count,
+                                   int batch, const SlotTangents &slots, const StateRange *ranges,
+                                   int num_ranges, int *used, ValidationError *error);
 
 /** @brief Reports the first active state of `range` that no factor reads. */
-void LaunchCheckUsed(cudaStream_t stream, const int *used, int batch, const StateRange &range,
-                     ValidationError *error);
+CUNLS_API void LaunchCheckUsed(cudaStream_t stream, const int *used, int batch,
+                               const StateRange &range, ValidationError *error);
 
 /** @brief Checks that the first `count` constant ids are in [0, num_blocks). */
-void LaunchCheckConstantIds(cudaStream_t stream, const int *ids, size_t count, int num_blocks,
-                            int batch, ValidationError *error);
+CUNLS_API void LaunchCheckConstantIds(cudaStream_t stream, const int *ids, size_t count,
+                                      int num_blocks, int batch, ValidationError *error);
 
 }  // namespace problem_internal
 }  // namespace cunls

@@ -21,6 +21,7 @@
 
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/factor_batch.h"
 
@@ -57,7 +58,7 @@ enum class ConstraintKind {
  * known. ConstraintFactorBatch turns any factor batch into constraints;
  * BoundFactorBatch is a built-in inequality constraint.
  */
-class ConstraintFactorBatchBase : public FactorBatch {
+class CUNLS_API ConstraintFactorBatchBase : public FactorBatch {
  public:
   /** @brief Penalty ρ of every factor until it is set otherwise. */
   static constexpr float kDefaultPenalty = 10.f;
@@ -146,7 +147,7 @@ class ConstraintFactorBatchBase : public FactorBatch {
  * equality; "keep 0.3 m from the obstacle" is a signed-distance factor wrapped
  * as an inequality.
  */
-class ConstraintFactorBatch : public ConstraintFactorBatchBase {
+class CUNLS_API ConstraintFactorBatch : public ConstraintFactorBatchBase {
  public:
   /**
    * @param inner Factor batch whose residuals are the constraint rows (not owned).
@@ -184,13 +185,14 @@ class ConstraintFactorBatch : public ConstraintFactorBatchBase {
  * `values` holds the unscaled constraint values of n items and `jacobians`
  * (nullable) their Jacobians with `jacobian_pitch` columns.
  */
-void ApplyAugmentedLagrangian(ConstraintKind kind, float scale, const float *multipliers,
-                              const float *penalties, float *values, float *jacobians, size_t rows,
-                              size_t jacobian_pitch, size_t num_items, const int *factor_ids,
-                              size_t num_factors, cudaStream_t stream);
+CUNLS_API void ApplyAugmentedLagrangian(ConstraintKind kind, float scale, const float *multipliers,
+                                        const float *penalties, float *values, float *jacobians,
+                                        size_t rows, size_t jacobian_pitch, size_t num_items,
+                                        const int *factor_ids, size_t num_factors,
+                                        cudaStream_t stream);
 
 /** @brief values[i] *= scale and, when non-null, jacobians[i] *= scale. */
-void ScaleConstraintRows(float scale, float *values, size_t num_values, float *jacobians,
-                         size_t num_jacobian_values, cudaStream_t stream);
+CUNLS_API void ScaleConstraintRows(float scale, float *values, size_t num_values, float *jacobians,
+                                   size_t num_jacobian_values, cudaStream_t stream);
 
 }  // namespace cunls

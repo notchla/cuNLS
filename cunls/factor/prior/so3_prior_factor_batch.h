@@ -18,6 +18,7 @@
 #pragma once
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -41,7 +42,7 @@ namespace cunls {
  *       rotation matrices and remain valid for the lifetime of this object.
  *       Memory layout: [R0: 9 floats][R1: 9 floats]...[RN-1: 9 floats]
  */
-class SO3PriorFactorBatch : public SizedFactorBatch<3, 3> {
+class CUNLS_API SO3PriorFactorBatch : public SizedFactorBatch<3, 3> {
   using Base = SizedFactorBatch<3, 3>;
 
  public:

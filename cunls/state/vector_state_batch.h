@@ -21,6 +21,7 @@
 
 #include <stdexcept>
 
+#include "cunls/common/export.h"
 #include "sized_state_batch.h"
 
 namespace cunls {
@@ -36,9 +37,10 @@ namespace cunls {
  *        floats; component k uses entry k % bound_values (replicas share the
  *        bounds).
  */
-void CalculateVectorPlus(const float *x, const float *delta, float *x_plus_delta, size_t num_params,
-                         int dim, cudaStream_t stream, const float *lower = nullptr,
-                         const float *upper = nullptr, size_t bound_values = 0);
+CUNLS_API void CalculateVectorPlus(const float *x, const float *delta, float *x_plus_delta,
+                                   size_t num_params, int dim, cudaStream_t stream,
+                                   const float *lower = nullptr, const float *upper = nullptr,
+                                   size_t bound_values = 0);
 
 /**
  * @brief Box bounds of a state batch: lower <= x <= upper per component
@@ -46,7 +48,7 @@ void CalculateVectorPlus(const float *x, const float *delta, float *x_plus_delta
  * AugmentedLagrangianMinimizer; read through this interface (dynamic_cast
  * from StateBatch), so StateBatch itself knows nothing about bounds.
  */
-class BoxBoundedStates {
+class CUNLS_API BoxBoundedStates {
  public:
   virtual ~BoxBoundedStates() = default;
 

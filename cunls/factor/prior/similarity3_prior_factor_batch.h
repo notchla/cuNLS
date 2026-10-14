@@ -19,6 +19,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -44,7 +45,7 @@ namespace cunls {
  *       Each Sim(3) matrix is stored row-major as:
  *       [R00 R01 R02 tx, R10 R11 R12 ty, R20 R21 R22 tz, 0 0 0 1/s]
  */
-class Similarity3PriorFactorBatch : public SizedFactorBatch<7, 7> {
+class CUNLS_API Similarity3PriorFactorBatch : public SizedFactorBatch<7, 7> {
   using Base = SizedFactorBatch<7, 7>;
 
  public:

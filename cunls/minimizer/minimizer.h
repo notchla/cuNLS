@@ -22,6 +22,7 @@
 #include <functional>
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/common/pinned_vector.h"
 #include "cunls/common/profiler.h"
 #include "cunls/common/types.h"
@@ -281,8 +282,8 @@ struct InnerSolve {
 };
 
 /** @brief Minimize() with the settings of `inner` (AugmentedLagrangianMinimizer, tests). */
-MinimizerSummary InnerMinimize(Minimizer &minimizer, cudaStream_t stream, Problem &problem,
-                               const InnerSolve &inner);
+CUNLS_API MinimizerSummary InnerMinimize(Minimizer &minimizer, cudaStream_t stream,
+                                         Problem &problem, const InnerSolve &inner);
 
 /** @brief What was set up for the last problem; skipped on reuse_structure. */
 struct MinimizerStructure {
@@ -318,8 +319,9 @@ struct MinimizerScratch {
  * residuals and Jacobians, lays out the tangent space (`state_ops`) and builds
  * the Hessian pattern. Internal; tests use it to assemble systems in isolation.
  */
-void SetUpStructure(cudaStream_t stream, Problem &problem, const MinimizerOptions &options,
-                    StateBatchOps &state_ops, MinimizerSystem &system);
+CUNLS_API void SetUpStructure(cudaStream_t stream, Problem &problem,
+                              const MinimizerOptions &options, StateBatchOps &state_ops,
+                              MinimizerSystem &system);
 
 /**
  * @brief Step 1 of Minimize(): the Gauss-Newton system at `state`, H = JᵀJ and
@@ -327,9 +329,9 @@ void SetUpStructure(cudaStream_t stream, Problem &problem, const MinimizerOption
  * for the same problem. Internal; tests use it to assemble systems in
  * isolation.
  */
-void BuildSystem(cudaStream_t stream, const Problem &problem, const MinimizerState &state,
-                 const MinimizerOptions &options, MinimizerSystem &system,
-                 MinimizerScratch &scratch);
+CUNLS_API void BuildSystem(cudaStream_t stream, const Problem &problem, const MinimizerState &state,
+                           const MinimizerOptions &options, MinimizerSystem &system,
+                           MinimizerScratch &scratch);
 
 }  // namespace internal
 
@@ -358,7 +360,7 @@ void BuildSystem(cudaStream_t stream, const Problem &problem, const MinimizerSta
  * A minimizer is bound to no problem; it caches the structure of the last
  * problem it solved (see MinimizerOptions::reuse_structure).
  */
-class Minimizer {
+class CUNLS_API Minimizer {
  public:
   virtual ~Minimizer() = default;
   Minimizer(const Minimizer &) = delete;

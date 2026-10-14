@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/factor_batch.h"
 #include "cunls/minimizer/jacobian_mode.h"
@@ -57,8 +58,15 @@ namespace cunls {
  * FactorBatch::SetNumActiveFactors / StateBatch::SetNumActiveStates. Only the first
  * NumActiveFactors() x B entries of a table are read (B = StateSizes().size()).
  */
-class Problem {
+class CUNLS_API Problem {
  public:
+  Problem() = default;
+  // Declared explicitly: dllexport instantiates the implicit copy, which the members can't support.
+  Problem(const Problem &) = delete;
+  Problem &operator=(const Problem &) = delete;
+  Problem(Problem &&) = default;
+  Problem &operator=(Problem &&) = default;
+
   /**
    * @brief Adds a factor batch without a loss function.
    *

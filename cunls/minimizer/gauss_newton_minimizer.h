@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/minimizer/minimizer.h"
 
 namespace cunls {
@@ -40,7 +41,7 @@ namespace cunls {
  *
  * See Minimizer for the iteration and MinimizerOptions for the settings.
  */
-class GaussNewtonMinimizer : public Minimizer {
+class CUNLS_API GaussNewtonMinimizer : public Minimizer {
  public:
   /** @brief Constructs the minimizer; see MinimizerOptions. */
   explicit GaussNewtonMinimizer(const MinimizerOptions &options = MinimizerOptions());

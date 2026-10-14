@@ -6,6 +6,7 @@
 #pragma once
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/state/sized_state_batch.h"
 
@@ -20,7 +21,7 @@ namespace cunls {
  *   T_new = T * Exp(Hat(xi)),
  * with Exp the matrix exponential and projection to det = 1. *
  */
-class SL4StateBatch : public SizedStateBatch<16, 15> {
+class CUNLS_API SL4StateBatch : public SizedStateBatch<16, 15> {
  public:
   using Base = SizedStateBatch<16, 15>;
 

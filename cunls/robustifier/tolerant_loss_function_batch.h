@@ -17,8 +17,10 @@
 
 #pragma once
 
-#include "cunls/robustifier/loss_function_batch.h"
 #include <cuda_runtime.h>
+
+#include "cunls/common/export.h"
+#include "cunls/robustifier/loss_function_batch.h"
 
 namespace cunls {
 
@@ -34,8 +36,8 @@ namespace cunls {
  * c = b * log(1 + exp(-a/b)) is computed in the constructor so that
  * rho(0) = 0. Requires a >= 0 and b > 0.
  */
-class TolerantLossFunctionBatch : public LossFunctionBatch {
-public:
+class CUNLS_API TolerantLossFunctionBatch : public LossFunctionBatch {
+ public:
   /**
    * @brief Constructs a Tolerant loss with the given parameters.
    * @param a Offset parameter (a >= 0).

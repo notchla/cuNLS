@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/sized_factor_batch.h"
 
 namespace cunls {
@@ -64,7 +65,7 @@ struct QuadrotorParameters {
  * limits 0 <= f_i <= f_max as BoundFactorBatch<4>. The model needs short
  * steps (about 10-25 ms).
  */
-class QuadrotorFactorBatch : public SizedFactorBatch<12, 6, 3, 3, 4, 6, 3, 3> {
+class CUNLS_API QuadrotorFactorBatch : public SizedFactorBatch<12, 6, 3, 3, 4, 6, 3, 3> {
  public:
   /**
    * @param time_steps Device array of `capacity` step durations dt_k [s].

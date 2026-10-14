@@ -19,6 +19,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -44,7 +45,7 @@ namespace cunls {
  * transform is stored row-major: [cos(theta), -sin(theta), tx, sin(theta),
  * cos(theta), ty, 0, 0, 1/s]
  */
-class Similarity2PriorFactorBatch : public SizedFactorBatch<4, 4> {
+class CUNLS_API Similarity2PriorFactorBatch : public SizedFactorBatch<4, 4> {
   using Base = SizedFactorBatch<4, 4>;
 
  public:

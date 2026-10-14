@@ -18,6 +18,7 @@
 #pragma once
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -41,7 +42,7 @@ namespace cunls {
  *   - 6: First state (SE3 pose tangent)
  *   - 3: Second state (3D point)
  */
-class ReprojectionFactorBatch : public SizedFactorBatch<2, 6, 3> {
+class CUNLS_API ReprojectionFactorBatch : public SizedFactorBatch<2, 6, 3> {
  public:
   /**
    * @brief Constructs with identity camera-from-rig transforms.

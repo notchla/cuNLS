@@ -7,6 +7,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -21,7 +22,7 @@ namespace cunls {
  * matching the small-residual linearization used when exact SL(4) right
  * Jacobians are omitted.
  */
-class SL4PriorFactorBatch : public SizedFactorBatch<15, 15> {
+class CUNLS_API SL4PriorFactorBatch : public SizedFactorBatch<15, 15> {
   using Base = SizedFactorBatch<15, 15>;
 
  public:

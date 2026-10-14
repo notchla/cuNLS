@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/state/state_batch.h"
 
 namespace cunls {
@@ -39,8 +40,9 @@ namespace cunls {
  * @param state_batch The state batch.
  * @param[out] column_offsets One entry per state; resized as needed.
  */
-void ComputeStateColumnOffsets(cudaStream_t stream, int first_column, const StateBatch *state_batch,
-                               DeviceVector<int> &column_offsets);
+CUNLS_API void ComputeStateColumnOffsets(cudaStream_t stream, int first_column,
+                                         const StateBatch *state_batch,
+                                         DeviceVector<int> &column_offsets);
 
 /**
  * @brief Orchestrates manifold Plus operations across multiple state batches.
@@ -51,7 +53,7 @@ void ComputeStateColumnOffsets(cudaStream_t stream, int first_column, const Stat
  * into per-batch update segments and dispatching the Plus operation on each
  * batch.
  */
-class StateBatchOps {
+class CUNLS_API StateBatchOps {
  public:
   /**
    * @brief Constructs and preprocesses the operator for the given state

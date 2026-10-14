@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/helper.h"
 #include "cunls/common/types.h"
 
@@ -30,7 +31,7 @@ namespace cunls {
  * @param status cuBLAS status code to convert
  * @return C-string containing the error message
  */
-const char *cublasGetErrorString(int status);
+CUNLS_API const char *cublasGetErrorString(int status);
 
 /**
  * @brief Macro to throw an exception on cuBLAS errors.
@@ -58,7 +59,7 @@ const char *cublasGetErrorString(int status);
  * Thread-safe: Each instance manages its own handle independently.
  * Non-copyable: Prevents accidental handle duplication.
  */
-class cuBLASHandle {
+class CUNLS_API cuBLASHandle {
  public:
   cuBLASHandle() = default;
 
