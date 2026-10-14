@@ -66,6 +66,27 @@ The resulting ``.whl`` file in ``dist/`` can be installed on any machine with
 a compatible CUDA Toolkit and GPU driver.
 
 ===============================================================================
+Build on Windows
+===============================================================================
+
+From an **x64 Native Tools Command Prompt for VS 2022** (see
+:ref:`installation:Build on Windows (MSVC)` for the toolchain), in a Python
+environment:
+
+.. code-block:: bat
+
+   pip install scikit-build-core nanobind ninja
+   powershell -ExecutionPolicy Bypass -File scripts\build_pycunls_windows.ps1 dist
+
+- Pass extra CMake flags in ``CMAKE_ARGS``, with forward slashes in paths
+  (it is split like a shell command line), never in ``SKBUILD_CMAKE_ARGS``:
+  that variable replaces the flags in ``pyproject.toml`` and produces a wheel
+  without the extension.
+- ``import pycunls`` finds the CUDA DLLs through ``CUDA_PATH``. The extension
+  also needs ``MSVCP140.dll`` from the Visual C++ Redistributable, which
+  Python does not ship.
+
+===============================================================================
 Dependencies
 ===============================================================================
 
@@ -107,7 +128,8 @@ Optional: cuDSS sparse solver
 cuDSS is an **optional runtime dependency**: the ``pycunls`` wheel neither
 bundles nor requires it, and every other sparse linear solver works without
 it. To use ``SparseLinearSolverType.cuDSS``, make ``libcudss.so`` reachable
-through ``LD_LIBRARY_PATH`` *before* starting ``python``; requesting it
+through ``LD_LIBRARY_PATH`` *before* starting ``python`` (on Windows, add the
+directory of ``cudss64_0.dll`` with ``os.add_dll_directory()``); requesting it
 otherwise raises ``RuntimeError``. See :ref:`installation:Notes` for details.
 
 Next: :doc:`pycunls_quick_start`.

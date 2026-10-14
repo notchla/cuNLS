@@ -196,7 +196,8 @@ class InformationFactorBatch : public T::sized_layout {
     }
 
     auto state_sizes = this->StateSizes();
-    const size_t jacobian_pitch = std::accumulate(state_sizes.begin(), state_sizes.end(), 0);
+    const size_t jacobian_pitch =
+        std::accumulate(state_sizes.begin(), state_sizes.end(), size_t{0});
 
     ApplyInformationToJacobianItems(info_ptr, jacobians, rsize, jacobian_pitch, num_items,
                                     factor_ids, num_factors, stream);

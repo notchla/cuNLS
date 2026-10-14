@@ -21,8 +21,8 @@ Runtime / core build dependencies
 Optional dependency
 ===============================================================================
 
-- **cuDSS** (only required to use `SparseLinearSolverType::cuDSS`; loaded via
-  `dlopen()` at runtime, not linked or bundled — see :doc:`installation`)
+- **cuDSS** (only required to use `SparseLinearSolverType::cuDSS`; loaded at
+  runtime, not linked or bundled — see :doc:`installation`)
   - License: Proprietary (NVIDIA)
   - URL: `https://developer.nvidia.com/cudss`
 

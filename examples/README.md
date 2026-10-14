@@ -62,6 +62,9 @@ cmake -S examples -B build/examples/all \
 cmake --build build/examples/all -j
 ```
 
+On Windows, run these from an x64 Native Tools Command Prompt with `CUNLS_INSTALL_DIR` set to the
+shared install prefix, and put `<prefix>\bin` (for `cunls.dll`) on `PATH` before running the examples.
+
 ## Build all examples in Docker and export binaries
 
 ```bash

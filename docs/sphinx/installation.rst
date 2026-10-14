@@ -89,6 +89,41 @@ Pass ``-DBUILD_SHARED_LIBS=OFF`` to build a static library instead of a shared
 one.
 
 ===============================================================================
+Build on Windows (MSVC)
+===============================================================================
+
+Windows builds run natively, without Docker. Requirements: Visual Studio 2022
+(Build Tools with the "Desktop development with C++" workload), CUDA Toolkit
+12.8 or 13.x, CMake >= 3.22 and Ninja. From an **x64 Native Tools Command
+Prompt for VS 2022**:
+
+.. code-block:: bat
+
+   powershell -ExecutionPolicy Bypass -File scripts\build_cunls_windows.ps1 build_windows
+
+The script installs the Release shared library (``bin\cunls.dll`` and its
+import library ``lib\cunls.lib``) to ``build_windows\shared``, the static
+library (``lib\cunls.lib``) to ``build_windows\static``, and the cuDSS
+redistributable to ``build_windows\cudss``. ``EXTRA_CMAKE_ARGS`` works as for
+``build_cunls.sh``. To build and run the C++ tests:
+
+.. code-block:: bat
+
+   set EXTRA_CMAKE_ARGS=-DBUILD_TESTING=ON
+   powershell -ExecutionPolicy Bypass -File scripts\build_cunls_windows.ps1 build_windows
+   powershell -ExecutionPolicy Bypass -File scripts\test_cunls_windows.ps1 build_windows
+
+- Only Release builds are supported. The API passes ``std::string`` and
+  ``std::vector`` across the DLL boundary, so applications must also build in
+  Release (Debug fails to link with an ``_ITERATOR_DEBUG_LEVEL`` mismatch) with
+  the same MSVC toolset version.
+- At runtime, ``cunls.dll`` and the CUDA DLLs (``%CUDA_PATH%\bin``, or
+  ``%CUDA_PATH%\bin\x64`` for CUDA 13) must be on ``PATH``.
+- ``find_package(cunls)`` passes the compile flags the headers need
+  (``/Zc:preprocessor``, and ``CUNLS_STATIC`` for the static library) on to
+  consumers.
+
+===============================================================================
 CUDA target and Arm platform selection
 ===============================================================================
 
@@ -122,7 +157,8 @@ Notes
 - ``BUILD_TESTING`` is off by default.
 - ``ENABLE_PROFILING=ON`` adds NVTX support.
 - cuDSS is an **optional runtime dependency**. cunls never links against
-  ``libcudss.so``; instead it loads it with ``dlopen()`` the first time
+  ``libcudss.so``; instead it loads it with ``dlopen()`` (``LoadLibrary()`` on
+  Windows) the first time
   ``SparseLinearSolverType::cuDSS`` is used (see ``cmake/AddCUDSS.cmake`` and
   ``cunls/common/cudss_dynamic.h``). This means:
 
@@ -141,6 +177,9 @@ Notes
     startup, so setting it from inside an already-running process (for
     example via ``os.environ[...]`` in a live Python interpreter, before
     constructing a ``cuDSSLinearSolver``) has no effect on ``dlopen()``.
+  - On Windows the library is ``cudss64_0.dll``, in the ``bin`` directory of
+    the redistributable. Put that directory on ``PATH``, or, from Python, add
+    it with ``os.add_dll_directory()`` before the solver is created.
   - Requesting the cuDSS solver without ``libcudss.so`` reachable raises a
     ``std::runtime_error`` (Python: ``RuntimeError``) describing how to fix
     it, rather than a linker error or crash.

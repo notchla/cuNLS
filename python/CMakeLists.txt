@@ -1,10 +1,9 @@
 find_package(Python 3.10 COMPONENTS Interpreter Development.Module REQUIRED)
 
+# The PyPI sdist, not a GitHub archive: those lack the robin_map submodule nanobind needs.
 FetchContent_Declare(
   nanobind
-  GIT_REPOSITORY https://github.com/wjakob/nanobind.git
-  GIT_TAG        v2.4.0
-  GIT_SHALLOW    TRUE
+  URL https://files.pythonhosted.org/packages/source/n/nanobind/nanobind-2.4.0.tar.gz
 )
 FetchContent_MakeAvailable(nanobind)
 

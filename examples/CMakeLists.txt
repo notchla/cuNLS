@@ -14,6 +14,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
+if(MSVC)
+  # The cunls headers include CCCL, which requires the conforming preprocessor. MSVC's <cmath>
+  # defines M_PI only with _USE_MATH_DEFINES.
+  add_compile_definitions(_USE_MATH_DEFINES)
+  add_compile_options(
+    "$<$<COMPILE_LANGUAGE:CXX>:/Zc:preprocessor>"
+    "$<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=/Zc:preprocessor>")
+endif()
+
 if(NOT DEFINED CUNLS_INSTALL_DIR)
   message(FATAL_ERROR "Set CUNLS_INSTALL_DIR to the cuNLS install prefix.")
 endif()
