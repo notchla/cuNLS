@@ -18,10 +18,11 @@
 #pragma once
 
 // cuDSS is an optional runtime dependency: cunls never links against
-// libcudss.so. Instead this header exposes a table of function pointers,
-// populated by dlopen()/dlsym() the first time cuDSS is actually needed
+// libcudss.so (cudss64_0.dll on Windows). Instead this header exposes a table
+// of function pointers, populated by dlopen()/dlsym() (LoadLibrary()/
+// GetProcAddress() on Windows) the first time cuDSS is actually needed
 // (i.e. when SparseLinearSolverType::cuDSS is used). Using cunls without the
-// cuDSS solver never touches libcudss.so at all.
+// cuDSS solver never touches the cuDSS library at all.
 //
 // <cudss.h> is included only for type/enum declarations here; decltype() is
 // an unevaluated context, so referencing cuDSS functions to derive their
@@ -33,7 +34,7 @@
 namespace cunls {
 
 /**
- * @brief Table of cuDSS entry points resolved dynamically from libcudss.so.
+ * @brief Table of cuDSS entry points resolved dynamically from the cuDSS library.
  *
  * Member types mirror the declarations in the cuDSS header selected at
  * compile time, so this table automatically matches whichever cuDSS API
@@ -58,30 +59,32 @@ struct CudssApi {
 };
 
 /**
- * @brief Checks whether libcudss.so can be found and loaded, without
+ * @brief Checks whether the cuDSS library can be found and loaded, without
  * throwing.
  *
- * Performs (and caches) the same dlopen() probe as GetCudssApi(), but
+ * Performs (and caches) the same load probe as GetCudssApi(), but
  * reports the result instead of raising an exception. Useful for callers
  * that want to detect cuDSS availability up front (e.g. to choose a
  * fallback solver or skip a test).
  *
- * @return true if libcudss.so was found and every required symbol resolved.
+ * @return true if the cuDSS library was found and every required symbol resolved.
  */
 CUNLS_API bool cuDSSIsAvailable();
 
 /**
- * @brief Returns the lazily dlopen()'d cuDSS function table.
+ * @brief Returns the lazily loaded cuDSS function table.
  *
- * On first call, attempts to dlopen("libcudss.so") (and versioned
- * fallbacks). The result is cached for the lifetime of the process.
+ * On first call, attempts to load libcudss.so.0 / libcudss.so, or
+ * cudss64_0.dll on Windows. The result is cached for the lifetime of the
+ * process.
  *
  * @return A reference to the populated API table.
- * @throws std::runtime_error if libcudss.so could not be found/loaded, is
+ * @throws std::runtime_error if the cuDSS library could not be found/loaded, is
  *         missing an expected symbol, or reports a MAJOR.MINOR version that
  *         differs from the cuDSS headers cunls was built against, with a
  *         message explaining how to fix it (e.g. add the matching cuDSS
- *         release's lib/ directory to LD_LIBRARY_PATH).
+ *         release's lib/ directory to LD_LIBRARY_PATH, or its bin/
+ *         directory to PATH on Windows).
  */
 CUNLS_API const CudssApi &GetCudssApi();
 

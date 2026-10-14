@@ -68,7 +68,8 @@ if(CUNLS_ENABLE_CUDSS)
   # downloaded libcudss.so/.a for packaging cuDSS as a standalone artifact.
   set(CUDSS_VERSION "0.8.0.10" CACHE STRING "cuDSS version to download")
   set(CUDSS_PLATFORM "auto" CACHE STRING "cuDSS redistribution platform")
-  set_property(CACHE CUDSS_PLATFORM PROPERTY STRINGS auto linux-x86_64 linux-aarch64 linux-sbsa)
+  set_property(CACHE CUDSS_PLATFORM PROPERTY STRINGS auto linux-x86_64 linux-aarch64 linux-sbsa
+    windows-x86_64)
   add_cudss(VERSION "${CUDSS_VERSION}" PLATFORM "${CUDSS_PLATFORM}")
 endif()
 

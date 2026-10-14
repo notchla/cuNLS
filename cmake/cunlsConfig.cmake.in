@@ -6,7 +6,8 @@
 # loads libcudss.so via dlopen() only when SparseLinearSolverType::cuDSS is
 # actually used, so it is never linked against and does not need to be found
 # at CMake configure time. To use the cuDSS solver, install cuDSS separately
-# and ensure libcudss.so is on the consumer's LD_LIBRARY_PATH at runtime.
+# and ensure libcudss.so is on the consumer's LD_LIBRARY_PATH at runtime
+# (cudss64_0.dll on PATH on Windows).
 
 include(CMakeFindDependencyMacro)
 find_dependency(CUDAToolkit REQUIRED)

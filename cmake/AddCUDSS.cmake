@@ -9,15 +9,16 @@
 # directory.
 #
 # cuDSS is an OPTIONAL runtime dependency of cunls: cunls loads libcudss.so
-# with dlopen() at runtime (see cunls/common/cudss_dynamic.h) instead of
+# (cudss64_0.dll on Windows) at runtime (see cunls/common/cudss_dynamic.h) instead of
 # linking against it, so cunls binaries carry no link-time or load-time
 # dependency on cuDSS. Only the headers are needed at compile time to declare
 # the cuDSS types/functions used by cudss_dynamic.cpp and cudss_helper.cpp.
 #
-# The downloaded archive's lib/ directory (containing libcudss.so and
-# libcudss_static.a) is exposed via CUDSS_LIB_DIR in the parent scope so
-# callers can point LD_LIBRARY_PATH at it (e.g. for tests) or package it as a
-# standalone artifact, separate from cunls's own binaries. The headers are
+# The downloaded archive's runtime library directory (lib/ with libcudss.so
+# and libcudss_static.a, or bin/ with cudss64_0.dll on Windows) is exposed via
+# CUDSS_LIB_DIR in the parent scope so callers can point LD_LIBRARY_PATH (PATH
+# on Windows) at it (e.g. for tests) or package it as a standalone artifact,
+# separate from cunls's own binaries. The headers are
 # platform-independent, but these libraries are not, so the archive must match
 # the target platform.
 #
@@ -29,8 +30,9 @@
 # Parameters:
 #   VERSION  - cuDSS version to download (optional, defaults to 0.8.0.10)
 #   PLATFORM - cuDSS redistribution platform: auto, linux-x86_64,
-#              linux-aarch64 (Jetson), or linux-sbsa (Arm servers and CUDA 13
-#              Jetson). auto (the default) uses the CUDA Toolkit target.
+#              linux-aarch64 (Jetson), linux-sbsa (Arm servers and CUDA 13
+#              Jetson), or windows-x86_64. auto (the default) uses the CUDA
+#              Toolkit target.
 function(add_cudss)
   set(options "")
   set(oneValueArgs VERSION PLATFORM)
@@ -52,6 +54,9 @@ function(add_cudss)
   # Reading the target from the toolkit layout avoids guessing Jetson vs SBSA
   # from the processor name, which is aarch64 for both.
   set(_cudss_platform "${ARG_PLATFORM}")
+  if(_cudss_platform STREQUAL "auto" AND WIN32)
+    set(_cudss_platform "windows-x86_64")
+  endif()
   if(_cudss_platform STREQUAL "auto")
     foreach(_cudss_include_dir IN LISTS CUDAToolkit_INCLUDE_DIRS)
       file(REAL_PATH "${_cudss_include_dir}" _cudss_include_dir)
@@ -73,8 +78,15 @@ function(add_cudss)
   endif()
 
   set(CUDSS_URL "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/${_cudss_platform}/")
-  string(APPEND CUDSS_URL "libcudss-${_cudss_platform}-${ARG_VERSION}_${CUDSS_CUDA_TAG}-archive.tar.xz")
-  message(STATUS "Using prebuilt cuDSS ${ARG_VERSION} headers (loaded at runtime via dlopen)")
+  if(_cudss_platform MATCHES "^windows")
+    set(_cudss_archive_ext "zip")
+    set(_cudss_runtime_dir "bin")
+  else()
+    set(_cudss_archive_ext "tar.xz")
+    set(_cudss_runtime_dir "lib")
+  endif()
+  string(APPEND CUDSS_URL "libcudss-${_cudss_platform}-${ARG_VERSION}_${CUDSS_CUDA_TAG}-archive.${_cudss_archive_ext}")
+  message(STATUS "Using prebuilt cuDSS ${ARG_VERSION} headers (loaded at runtime)")
   message(STATUS "cuDSS download URL: ${CUDSS_URL}")
 
   include(FetchContent)
@@ -91,7 +103,7 @@ function(add_cudss)
 
   # Exposed so the top-level build can package cuDSS's shared/static
   # libraries as a standalone artifact and so tests can add it to
-  # LD_LIBRARY_PATH; cunls itself never links against these files.
-  set(CUDSS_LIB_DIR "${cudss_SOURCE_DIR}/lib" PARENT_SCOPE)
+  # LD_LIBRARY_PATH (PATH on Windows); cunls itself never links against these files.
+  set(CUDSS_LIB_DIR "${cudss_SOURCE_DIR}/${_cudss_runtime_dir}" PARENT_SCOPE)
   set(CUDSS_INCLUDE_DIR "${cudss_SOURCE_DIR}/include" PARENT_SCOPE)
 endfunction()
