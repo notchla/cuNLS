@@ -41,7 +41,14 @@
 #endif
 
 #ifdef _MSC_VER
-// C4251/C4275 flag std:: members and non-exported bases of exported classes.
-// Benign: consumers must use the same MSVC toolset and Release CRT as cunls.
-#pragma warning(disable : 4251 4275)
+// C4251/C4275 (and nvcc's 1394) flag std:: members and non-exported bases of
+// exported classes. Benign: consumers must use the same MSVC toolset and
+// Release CRT as cunls.
+// C4910: inside the DLL build MSVC ignores `extern` on the Sized*Batch
+// explicit instantiation declarations and instantiates them anyway, matching
+// the explicit instantiations cunls exports.
+#pragma warning(disable : 4251 4275 4910)
+#ifdef __CUDACC__
+#pragma nv_diag_suppress 1394
+#endif
 #endif

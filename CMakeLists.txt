@@ -227,6 +227,8 @@ if(BUILD_TESTING)
     URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
   )
   set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+  # Otherwise googletest switches MSVC to the static runtime (/MT), which cunls (/MD) can't link with.
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(googletest)
 
   enable_testing()
@@ -326,8 +328,10 @@ if(BUILD_TESTING)
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
   )
 
+  # _USE_MATH_DEFINES: MSVC's <cmath> defines M_PI only with it.
   target_compile_definitions(nls_tests PRIVATE
-    "CUNLS_TEST_DATA_DIR=\"${CMAKE_SOURCE_DIR}/tests/data\"")
+    "CUNLS_TEST_DATA_DIR=\"${CMAKE_SOURCE_DIR}/tests/data\""
+    _USE_MATH_DEFINES)
 
   set(TEST_LIBS cunls GTest::gtest_main
     CUDA::cublas CUDA::cusparse CUDA::cusolver CUDA::cudart)
@@ -338,12 +342,19 @@ if(BUILD_TESTING)
 
   include(GoogleTest)
   if(CUNLS_ENABLE_CUDSS)
-    # Tests exercise SparseLinearSolverType::cuDSS, which dlopen()s libcudss.so
-    # at runtime; point LD_LIBRARY_PATH at the copy FetchContent downloaded for
-    # this build so the tests find it without a system-wide cuDSS install.
+    # Tests exercise SparseLinearSolverType::cuDSS, which loads the cuDSS library
+    # at runtime; put the copy FetchContent downloaded for this build on the
+    # loader search path (PATH on Windows) so the tests find it without a
+    # system-wide cuDSS install.
+    if(WIN32)
+      set(_cunls_library_path_var PATH)
+    else()
+      set(_cunls_library_path_var LD_LIBRARY_PATH)
+    endif()
     target_compile_definitions(nls_tests PRIVATE CUNLS_ENABLE_CUDSS)
     gtest_discover_tests(nls_tests
-      PROPERTIES ENVIRONMENT "LD_LIBRARY_PATH=${CUDSS_LIB_DIR}:$ENV{LD_LIBRARY_PATH}"
+      PROPERTIES ENVIRONMENT_MODIFICATION
+        "${_cunls_library_path_var}=path_list_prepend:${CUDSS_LIB_DIR}"
     )
   else()
     gtest_discover_tests(nls_tests)
@@ -363,6 +374,9 @@ if(BUILD_PYTHON_BINDINGS)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
+  if(MSVC)
+    message(FATAL_ERROR "Coverage builds need GCC's gcov and lcov; they are not supported with MSVC.")
+  endif()
   target_compile_options(cunls PRIVATE -fprofile-arcs -ftest-coverage)
   target_compile_options(nls_tests PRIVATE -fprofile-arcs -ftest-coverage)
   target_link_libraries(nls_tests PRIVATE gcov)

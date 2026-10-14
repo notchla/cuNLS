@@ -43,11 +43,11 @@
  */
 
 #include <gtest/gtest.h>
-#include <sys/stat.h>
 
 #include <algorithm>
 #include <array>
 #include <cstdio>
+#include <filesystem>
 #include <fstream>
 #include <functional>
 #include <random>
@@ -240,10 +240,14 @@ class NumericDiffE2EPerfTest : public ::testing::TestWithParam<PerfParams> {
       << n_secondary << "," << mode << "," << mean_ms << "," << num_iterations << "\n";
   }
 
-  static std::string CsvPath() { return "/tmp/cunls_numeric_diff_perf/e2e_results.csv"; }
+  static std::filesystem::path CsvDir() {
+    return std::filesystem::temp_directory_path() / "cunls_numeric_diff_perf";
+  }
+
+  static std::string CsvPath() { return (CsvDir() / "e2e_results.csv").string(); }
 
   static void SetUpTestSuite() {
-    ::mkdir("/tmp/cunls_numeric_diff_perf", 0755);
+    std::filesystem::create_directories(CsvDir());
     std::ofstream f(CsvPath(), std::ios::trunc);
     f << "problem_type,size_label,size_index,n_primary,n_secondary,jacobian_mode,"
          "mean_ms_per_minimize,num_iterations_to_convergence\n";

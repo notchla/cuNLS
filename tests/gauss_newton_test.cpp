@@ -81,6 +81,7 @@ class GaussNewtonMinimizerTest : public ::testing::Test {
       state_values_[i].fill(x);
     }
 
+    minimizer_options_.disable_safety_checks = false;
     test_utils::ConfigureTestSolver(TestParam::solver_id, minimizer_options_);
   }
 
@@ -125,7 +126,7 @@ class GaussNewtonMinimizerTest : public ::testing::Test {
   std::vector<VectorType> observations_;  ///< Target values for optimization.
   std::vector<VectorType> state_values_;  ///< Initial state values.
 
-  MinimizerOptions minimizer_options_{.disable_safety_checks = false};
+  MinimizerOptions minimizer_options_;
 
   profiler::Domain profiler_domain_{"GaussNewtonMinimizerTest"};  ///< Profiling domain.
 };
