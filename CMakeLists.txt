@@ -174,16 +174,13 @@ if(NOT BUILD_SHARED_LIBS)
   endif()
 endif()
 
-if(BUILD_SHARED_LIBS)
-  # On Windows the DLL is a RUNTIME output (its import library an ARCHIVE one)
-  # and must sit next to the test executables.
-  set_target_properties(cunls PROPERTIES
-      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-else()
-  set_target_properties(cunls PROPERTIES
-      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+# On Windows the DLL is a RUNTIME output (its import library an ARCHIVE one)
+# and must sit next to the test executables.
+set_target_properties(cunls PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+if(NOT BUILD_SHARED_LIBS)
   bundle_static_dependencies(cunls spdlog::spdlog)
 endif()
 

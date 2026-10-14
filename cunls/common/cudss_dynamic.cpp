@@ -39,9 +39,9 @@ namespace cunls {
 namespace {
 
 #ifdef _WIN32
-constexpr const char *kCudssLibraryCandidates[] = {"cudss64_0.dll"};
+constexpr const char *kCudssLibraryCandidates[] = {CUNLS_CUDSS_LIBRARY};
 #else
-constexpr const char *kCudssLibraryCandidates[] = {"libcudss.so.0", "libcudss.so"};
+constexpr const char *kCudssLibraryCandidates[] = {"libcudss.so.0", CUNLS_CUDSS_LIBRARY};
 #endif
 
 constexpr const char *kCudssMissingMessage =
