@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 
 namespace cunls {
@@ -36,8 +37,8 @@ namespace cunls {
  * @param[out] num_cols Number of columns in the matrix.
  * @param[out] num_nonzeros Number of nonzero elements.
  */
-void ExtractMatrixMetadata(cudaStream_t stream, const CSRSparseMatrix &matrix, int &num_rows,
-                           int &num_cols, int &num_nonzeros);
+CUNLS_API void ExtractMatrixMetadata(cudaStream_t stream, const CSRSparseMatrix &matrix,
+                                     int &num_rows, int &num_cols, int &num_nonzeros);
 
 /**
  * @brief Extracts the diagonal elements from a CSR sparse matrix.
@@ -49,7 +50,8 @@ void ExtractMatrixMetadata(cudaStream_t stream, const CSRSparseMatrix &matrix, i
  * @param matrix CSR sparse matrix to extract diagonal from.
  * @param[out] diagonal Output vector of diagonal elements.
  */
-void ExtractDiagonal(cudaStream_t stream, const CSRSparseMatrix &matrix, dvector<float> &diagonal);
+CUNLS_API void ExtractDiagonal(cudaStream_t stream, const CSRSparseMatrix &matrix,
+                               dvector<float> &diagonal);
 
 /**
  * @brief Adds a scaled diagonal to a sparse matrix.
@@ -63,8 +65,8 @@ void ExtractDiagonal(cudaStream_t stream, const CSRSparseMatrix &matrix, dvector
  * @param matrix Input CSR sparse matrix.
  * @param[out] result Output CSR sparse matrix (may alias matrix for in-place).
  */
-void AddScaledDiagonal(cudaStream_t stream, float scale, const dvector<float> &diagonal,
-                       const CSRSparseMatrix &matrix, CSRSparseMatrix &result);
+CUNLS_API void AddScaledDiagonal(cudaStream_t stream, float scale, const dvector<float> &diagonal,
+                                 const CSRSparseMatrix &matrix, CSRSparseMatrix &result);
 
 /**
  * @brief Creates a deep copy of a CSR sparse matrix.
@@ -76,8 +78,8 @@ void AddScaledDiagonal(cudaStream_t stream, float scale, const dvector<float> &d
  * @param input Source CSR sparse matrix.
  * @param[out] output Destination CSR sparse matrix.
  */
-void CopyCSRSparseMatrix(cudaStream_t stream, const CSRSparseMatrix &input,
-                         CSRSparseMatrix &output);
+CUNLS_API void CopyCSRSparseMatrix(cudaStream_t stream, const CSRSparseMatrix &input,
+                                   CSRSparseMatrix &output);
 
 /**
  * @brief Symmetric diagonal scaling of a CSR matrix: A_ij *= scale[i] *
@@ -87,36 +89,39 @@ void CopyCSRSparseMatrix(cudaStream_t stream, const CSRSparseMatrix &input,
  * @param[in,out] matrix CSR matrix updated in-place.
  * @param scale Length must match matrix row/column dimension (square H).
  */
-void ScaleSymmetricCSR(cudaStream_t stream, CSRSparseMatrix &matrix, const dvector<float> &scale);
+CUNLS_API void ScaleSymmetricCSR(cudaStream_t stream, CSRSparseMatrix &matrix,
+                                 const dvector<float> &scale);
 
 /**
  * @brief Sets v[i] = 1 / sqrt(max(v[i], floor_value)) for all i (in-place).
  *
  * Used after ExtractDiagonal when building S from Hessian diagonal.
  */
-void InvertSqrtWithFloorInPlace(cudaStream_t stream, dvector<float> &v, float floor_value = 1e-12f);
+CUNLS_API void InvertSqrtWithFloorInPlace(cudaStream_t stream, dvector<float> &v,
+                                          float floor_value = 1e-12f);
 
 // ---- Async variants: write scalar result to device memory, no D2H or sync --
 
-void ElementwiseMultiplyInPlace(cudaStream_t stream, float *a, const float *b, size_t n);
+CUNLS_API void ElementwiseMultiplyInPlace(cudaStream_t stream, float *a, const float *b, size_t n);
 
 /**
  * @brief positions[i] = index of the diagonal entry (i, i) in the values of a
  * square CSR matrix, or -1 when the row has none. Once per sparsity pattern.
  */
-void FindDiagonalPositions(cudaStream_t stream, const CSRSparseMatrix &matrix,
-                           dvector<int> &positions);
+CUNLS_API void FindDiagonalPositions(cudaStream_t stream, const CSRSparseMatrix &matrix,
+                                     dvector<int> &positions);
 
 /** @brief diagonal[i] = values[positions[i]] (0 where positions[i] < 0). */
-void ExtractDiagonalAt(cudaStream_t stream, const CSRSparseMatrix &matrix,
-                       const dvector<int> &positions, dvector<float> &diagonal);
+CUNLS_API void ExtractDiagonalAt(cudaStream_t stream, const CSRSparseMatrix &matrix,
+                                 const dvector<int> &positions, dvector<float> &diagonal);
 
 /** @brief values[positions[i]] += scale * diagonal[i] (in place). */
-void AddScaledDiagonalAt(cudaStream_t stream, float scale, const dvector<float> &diagonal,
-                         const dvector<int> &positions, CSRSparseMatrix &matrix);
+CUNLS_API void AddScaledDiagonalAt(cudaStream_t stream, float scale, const dvector<float> &diagonal,
+                                   const dvector<int> &positions, CSRSparseMatrix &matrix);
 
 /** @brief Copies only the values of a CSR matrix with the same pattern. */
-void CopyCSRValues(cudaStream_t stream, const CSRSparseMatrix &input, CSRSparseMatrix &output);
+CUNLS_API void CopyCSRValues(cudaStream_t stream, const CSRSparseMatrix &input,
+                             CSRSparseMatrix &output);
 
 /**
  * @brief For every i with mask[i] == 0: zeroes row i and column i of a
@@ -125,16 +130,17 @@ void CopyCSRValues(cudaStream_t stream, const CSRSparseMatrix &input, CSRSparseM
  * the masked rows (the column entries are found by binary search in the rows
  * they live in), so a mostly free mask costs about one read of the mask.
  */
-void ZeroMaskedRowsColumns(cudaStream_t stream, CSRSparseMatrix &matrix,
-                           const dvector<float> &mask);
+CUNLS_API void ZeroMaskedRowsColumns(cudaStream_t stream, CSRSparseMatrix &matrix,
+                                     const dvector<float> &mask);
 
 /** @brief Block-storage counterpart of the CSR overload (scalar mask). */
-void ZeroMaskedRowsColumns(cudaStream_t stream, BSRSparseMatrix &matrix,
-                           const dvector<float> &mask);
+CUNLS_API void ZeroMaskedRowsColumns(cudaStream_t stream, BSRSparseMatrix &matrix,
+                                     const dvector<float> &mask);
 
 /** @brief y = A * x for scalar CSR storage (cuSPARSE SpMV; y is resized). */
-void MultiplyCSRByDenseVector(cudaStream_t stream, void *handle, const CSRSparseMatrix &matrix,
-                              int num_rows, int num_cols, int num_nonzeros, const dvector<float> &x,
-                              dvector<float> &y, dvector<uint8_t> &buffer);
+CUNLS_API void MultiplyCSRByDenseVector(cudaStream_t stream, void *handle,
+                                        const CSRSparseMatrix &matrix, int num_rows, int num_cols,
+                                        int num_nonzeros, const dvector<float> &x,
+                                        dvector<float> &y, dvector<uint8_t> &buffer);
 
 }  // namespace cunls

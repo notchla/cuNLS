@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/linear_solver/sparse_linear_solver_base.h"
 
@@ -51,7 +52,7 @@ namespace cunls {
  * body, and nothing else.  Dimension validation, the dense scatter and the
  * layout dispatch all live here.
  */
-class DenseLinearSolverBase : public SparseLinearSolver {
+class CUNLS_API DenseLinearSolverBase : public SparseLinearSolver {
  public:
   /**
    * @copydoc SparseLinearSolver::SupportsBlockStorage

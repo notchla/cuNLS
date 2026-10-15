@@ -6,8 +6,9 @@ if(POLICY CMP0135)
   cmake_policy(SET CMP0135 NEW)
 endif()
 
+# The default CUDA architectures depend on the nvcc version, which is only known after project().
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
-  set(CMAKE_CUDA_ARCHITECTURES "75;80;86;89" CACHE STRING "CUDA architectures to compile")
+  set(_cunls_default_cuda_architectures ON)
 endif()
 
 # /usr/local/cuda/bin is often not on PATH, and distro packages such as Ubuntu's
@@ -19,12 +20,41 @@ endif()
 
 project(cunls VERSION 0.2 LANGUAGES CXX CUDA)
 
+# Blackwell (sm_100, sm_120) needs CUDA 12.8. Without its cubins those GPUs JIT the PTX, which fails
+# with cudaErrorUnsupportedPtxVersion when the driver is older than the toolkit.
+if(_cunls_default_cuda_architectures)
+  set(CMAKE_CUDA_ARCHITECTURES 75 80 86 89)
+  if(CMAKE_CUDA_COMPILER_VERSION VERSION_GREATER_EQUAL 12.8)
+    list(APPEND CMAKE_CUDA_ARCHITECTURES 100 120)
+  endif()
+  set(CMAKE_CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}" CACHE STRING "CUDA architectures to compile" FORCE)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 option(BUILD_TESTING OFF)
+
+if(MSVC)
+  # /Zc:preprocessor is required by CCCL; /utf-8 because sources contain non-ASCII text.
+  add_compile_definitions(NOMINMAX WIN32_LEAN_AND_MEAN)
+  add_compile_options(
+    "$<$<COMPILE_LANGUAGE:CXX>:/utf-8;/Zc:preprocessor;/Zc:__cplusplus;/permissive-;/bigobj>"
+    "$<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=/utf-8,/Zc:preprocessor,/Zc:__cplusplus,/bigobj>")
+endif()
 option(BUILD_SHARED_LIBS "Build shared library (OFF for static)" ON)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+option(CUNLS_HIDDEN_VISIBILITY
+  "Export only symbols marked CUNLS_API, as the Windows DLL does" ON)
+# Set before the dependencies are fetched so the bundled spdlog/fmt symbols are hidden too.
+if(CUNLS_HIDDEN_VISIBILITY)
+  set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+  set(CMAKE_CUDA_VISIBILITY_PRESET hidden)
+  set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+endif()
 
 find_package(CUDAToolkit REQUIRED)
 
@@ -49,7 +79,8 @@ if(CUNLS_ENABLE_CUDSS)
   # downloaded libcudss.so/.a for packaging cuDSS as a standalone artifact.
   set(CUDSS_VERSION "0.8.0.10" CACHE STRING "cuDSS version to download")
   set(CUDSS_PLATFORM "auto" CACHE STRING "cuDSS redistribution platform")
-  set_property(CACHE CUDSS_PLATFORM PROPERTY STRINGS auto linux-x86_64 linux-aarch64 linux-sbsa)
+  set_property(CACHE CUDSS_PLATFORM PROPERTY STRINGS auto linux-x86_64 linux-aarch64 linux-sbsa
+    windows-x86_64)
   add_cudss(VERSION "${CUDSS_VERSION}" PLATFORM "${CUDSS_PLATFORM}")
 endif()
 
@@ -73,6 +104,14 @@ include_directories(
 
 # Add submodules
 add_subdirectory(cunls)
+
+# The sources compile in these object libraries, not in the cunls target, so
+# the export macros (cunls/common/export.h) are configured here.
+foreach(_cunls_object_lib IN LISTS CUNLS_OBJECT_LIBS)
+  target_compile_definitions(${_cunls_object_lib} PRIVATE CUNLS_BUILDING
+    $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:CUNLS_STATIC>
+    $<$<BOOL:${CUNLS_ENABLE_CUDSS}>:CUNLS_ENABLE_CUDSS>)
+endforeach()
 
 # Build library from object libraries (SHARED or STATIC per BUILD_SHARED_LIBS)
 add_library(cunls
@@ -103,6 +142,15 @@ foreach(_cunls_cuda_include_dir IN LISTS CUDAToolkit_INCLUDE_DIRS)
 endforeach()
 
 add_library(cunls::cunls ALIAS cunls)
+
+if(NOT BUILD_SHARED_LIBS)
+  target_compile_definitions(cunls PUBLIC CUNLS_STATIC)
+endif()
+
+# Public headers include CCCL, which rejects MSVC's traditional preprocessor.
+target_compile_options(cunls INTERFACE
+  "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/Zc:preprocessor>"
+  "$<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CXX_COMPILER_ID:MSVC>>:-Xcompiler=/Zc:preprocessor>")
 
 target_link_libraries(cunls
   PUBLIC CUDA::cudart
@@ -137,12 +185,13 @@ if(NOT BUILD_SHARED_LIBS)
   endif()
 endif()
 
-if(BUILD_SHARED_LIBS)
-  set_target_properties(cunls PROPERTIES
-      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-else()
-  set_target_properties(cunls PROPERTIES
-      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+# On Windows the DLL is a RUNTIME output (its import library an ARCHIVE one)
+# and must sit next to the test executables.
+set_target_properties(cunls PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+if(NOT BUILD_SHARED_LIBS)
   bundle_static_dependencies(cunls spdlog::spdlog)
 endif()
 
@@ -156,6 +205,7 @@ if(NOT BUILD_PYTHON_BINDINGS)
     EXPORT cunlsTargets
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
     INCLUDES DESTINATION include
   )
 
@@ -185,6 +235,8 @@ if(BUILD_TESTING)
     URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
   )
   set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+  # Otherwise googletest switches MSVC to the static runtime (/MT), which cunls (/MD) can't link with.
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
   FetchContent_MakeAvailable(googletest)
 
   enable_testing()
@@ -284,8 +336,10 @@ if(BUILD_TESTING)
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
   )
 
+  # _USE_MATH_DEFINES: MSVC's <cmath> defines M_PI only with it.
   target_compile_definitions(nls_tests PRIVATE
-    "CUNLS_TEST_DATA_DIR=\"${CMAKE_SOURCE_DIR}/tests/data\"")
+    "CUNLS_TEST_DATA_DIR=\"${CMAKE_SOURCE_DIR}/tests/data\""
+    _USE_MATH_DEFINES)
 
   set(TEST_LIBS cunls GTest::gtest_main
     CUDA::cublas CUDA::cusparse CUDA::cusolver CUDA::cudart)
@@ -296,12 +350,19 @@ if(BUILD_TESTING)
 
   include(GoogleTest)
   if(CUNLS_ENABLE_CUDSS)
-    # Tests exercise SparseLinearSolverType::cuDSS, which dlopen()s libcudss.so
-    # at runtime; point LD_LIBRARY_PATH at the copy FetchContent downloaded for
-    # this build so the tests find it without a system-wide cuDSS install.
+    # Tests exercise SparseLinearSolverType::cuDSS, which loads the cuDSS library
+    # at runtime; put the copy FetchContent downloaded for this build on the
+    # loader search path (PATH on Windows) so the tests find it without a
+    # system-wide cuDSS install.
+    if(WIN32)
+      set(_cunls_library_path_var PATH)
+    else()
+      set(_cunls_library_path_var LD_LIBRARY_PATH)
+    endif()
     target_compile_definitions(nls_tests PRIVATE CUNLS_ENABLE_CUDSS)
     gtest_discover_tests(nls_tests
-      PROPERTIES ENVIRONMENT "LD_LIBRARY_PATH=${CUDSS_LIB_DIR}:$ENV{LD_LIBRARY_PATH}"
+      PROPERTIES ENVIRONMENT_MODIFICATION
+        "${_cunls_library_path_var}=path_list_prepend:${CUDSS_LIB_DIR}"
     )
   else()
     gtest_discover_tests(nls_tests)
@@ -321,6 +382,9 @@ if(BUILD_PYTHON_BINDINGS)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
+  if(MSVC)
+    message(FATAL_ERROR "Coverage builds need GCC's gcov and lcov; they are not supported with MSVC.")
+  endif()
   target_compile_options(cunls PRIVATE -fprofile-arcs -ftest-coverage)
   target_compile_options(nls_tests PRIVATE -fprofile-arcs -ftest-coverage)
   target_link_libraries(nls_tests PRIVATE gcov)

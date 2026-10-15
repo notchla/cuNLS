@@ -21,6 +21,7 @@
 
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/constraint_factor_batch.h"
 #include "cunls/minimizer/minimizer.h"
@@ -192,7 +193,7 @@ struct ConstraintBatchState {
  * The multipliers and penalties live in the constraint batches, so the batches
  * may be solved again with warm_start.
  */
-class AugmentedLagrangianMinimizer {
+class CUNLS_API AugmentedLagrangianMinimizer {
  public:
   /**
    * @brief Wraps an inner minimizer.

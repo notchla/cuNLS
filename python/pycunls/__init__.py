@@ -49,6 +49,19 @@ For user-defined GPU factors implemented in NVIDIA Warp, see
 :mod:`pycunls.warp`.
 """
 
+import os
+import sys
+
+if sys.platform == "win32":
+    # Python resolves an extension's DLL dependencies (here the CUDA runtime,
+    # cuBLAS, cuSPARSE and cuSOLVER) only from os.add_dll_directory entries,
+    # not PATH. CUDA 13 moved its DLLs from bin to bin\x64.
+    _cuda_path = os.environ.get("CUDA_PATH")
+    if _cuda_path:
+        for _dll_dir in (os.path.join(_cuda_path, "bin"), os.path.join(_cuda_path, "bin", "x64")):
+            if os.path.isdir(_dll_dir):
+                os.add_dll_directory(_dll_dir)
+
 from pycunls._pycunls_core import (
     # --- CUDA helpers ---
     CudaStream,

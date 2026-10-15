@@ -18,6 +18,7 @@
 #pragma once
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/minimizer/problem.h"
 #include "cunls/state/state_batch.h"
@@ -42,9 +43,14 @@ namespace cunls {
  * The remap reads the problem's device connectivity tables
  * (Problem::DeviceStatePointers) directly: nothing is uploaded per solve.
  */
-class MinimizerState {
+class CUNLS_API MinimizerState {
  public:
   MinimizerState() = default;
+  // Declared explicitly: dllexport instantiates the implicit copy, which the members can't support.
+  MinimizerState(const MinimizerState &) = delete;
+  MinimizerState &operator=(const MinimizerState &) = delete;
+  MinimizerState(MinimizerState &&) = default;
+  MinimizerState &operator=(MinimizerState &&) = default;
 
   /**
    * @brief Constructs a minimizer state from a problem.
@@ -157,5 +163,5 @@ class MinimizerState {
  * @param state Source minimizer state.
  * @param[out] problem Destination problem to update.
  */
-void Copy(cudaStream_t stream, const MinimizerState &state, Problem &problem);
+CUNLS_API void Copy(cudaStream_t stream, const MinimizerState &state, Problem &problem);
 }  // namespace cunls

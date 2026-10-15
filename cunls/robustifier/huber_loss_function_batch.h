@@ -17,8 +17,10 @@
 
 #pragma once
 
-#include "cunls/robustifier/loss_function_batch.h"
 #include <cuda_runtime.h>
+
+#include "cunls/common/export.h"
+#include "cunls/robustifier/loss_function_batch.h"
 
 namespace cunls {
 
@@ -36,8 +38,8 @@ namespace cunls {
  *                              rho'(s) = delta / sqrt(s),
  *                              rho''(s) = -delta / (2*s^(3/2))
  */
-class HuberLossFunctionBatch : public LossFunctionBatch {
-public:
+class CUNLS_API HuberLossFunctionBatch : public LossFunctionBatch {
+ public:
   /**
    * @brief Constructs a Huber loss function with the given threshold.
    * @param delta The Huber threshold. Residuals with sqrt(s) > delta are

@@ -18,6 +18,7 @@
 #pragma once
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/state/sized_state_batch.h"
 
@@ -44,7 +45,7 @@ namespace cunls {
  * The class uses GPU-accelerated operations via fused CUDA kernels
  * for efficient batch processing of multiple transformations.
  */
-class Similarity3StateBatch : public SizedStateBatch<16, 7> {
+class CUNLS_CLASS_API Similarity3StateBatch : public SizedStateBatch<16, 7> {
  public:
   using Base = SizedStateBatch<16, 7>;
 
@@ -57,7 +58,7 @@ class Similarity3StateBatch : public SizedStateBatch<16, 7> {
    * @param capacity Number of states the buffer holds. The active count
    *        starts at 0: call SetNumActiveStates(n) before solving.
    */
-  Similarity3StateBatch(const float *device_ptr, size_t capacity);
+  CUNLS_API Similarity3StateBatch(const float *device_ptr, size_t capacity);
 
   /**
    * @brief Constructs a batch of Sim(3) states with constant state
@@ -72,8 +73,8 @@ class Similarity3StateBatch : public SizedStateBatch<16, 7> {
    * the indices of states that should remain constant.
    * @param const_capacity Number of ids the constant-id buffer holds.
    */
-  Similarity3StateBatch(const float *device_ptr, size_t capacity,
-                        const int *device_constant_state_ids, size_t const_capacity);
+  CUNLS_API Similarity3StateBatch(const float *device_ptr, size_t capacity,
+                                  const int *device_constant_state_ids, size_t const_capacity);
 
   /**
    * @brief Performs the Plus operation: x_plus_delta = x * Exp(delta)
@@ -87,8 +88,8 @@ class Similarity3StateBatch : public SizedStateBatch<16, 7> {
    * @param x_plus_delta Output transformation matrices (device pointer)
    * @param stream CUDA stream for asynchronous execution
    */
-  void Plus(const float *x, const float *delta, float *x_plus_delta, cudaStream_t stream,
-            size_t num_replicas = 1) override;
+  CUNLS_API void Plus(const float *x, const float *delta, float *x_plus_delta, cudaStream_t stream,
+                      size_t num_replicas = 1) override;
 
  private:
   mutable dvector<Matrix<4>> delta_transforms_;

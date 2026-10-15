@@ -19,6 +19,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -46,7 +47,7 @@ namespace cunls {
  *   - 6, 6: pose_k, pose_{k+1} tangent size (SE(3))
  *   - 6, 6: vel_k, vel_{k+1} size (R^6 body twist)
  */
-class ConstantVelocitySE3FactorBatch : public SizedFactorBatch<12, 6, 6, 6, 6> {
+class CUNLS_CLASS_API ConstantVelocitySE3FactorBatch : public SizedFactorBatch<12, 6, 6, 6, 6> {
  public:
   /**
    * @brief Constructs a batch of SE(3) constant-velocity factors.
@@ -57,16 +58,16 @@ class ConstantVelocitySE3FactorBatch : public SizedFactorBatch<12, 6, 6, 6, 6> {
    * @param capacity Number of factors the measurement buffers hold. The active
    *        count starts at 0: call SetNumActiveFactors(n) before evaluating or solving.
    */
-  ConstantVelocitySE3FactorBatch(const float *dt_ptr, size_t capacity);
+  CUNLS_API ConstantVelocitySE3FactorBatch(const float *dt_ptr, size_t capacity);
 
   /**
    * @brief Evaluates residuals and (optionally) Jacobians. Follows
    * FactorBatch::Evaluate's item contract: item t reads the time delta of
    * factor `factor_ids[t]` (or `t % NumActiveFactors()`) and the states of item t.
    */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   ConstantVelocitySE3FactorBatch() = delete;

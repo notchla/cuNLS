@@ -27,7 +27,8 @@ cuNLS organizes optimization into:
 ## Entry points
 
 - Public umbrella include: `cunls/cunls.h`
-- Build scripts: `scripts/build_cunls.sh`, `scripts/build_cunls_in_docker.sh`
+- Build scripts: `scripts/build_cunls.sh`, `scripts/build_cunls_in_docker.sh`;
+  Windows: `scripts/build_cunls_windows.ps1`
 - Examples: `examples/`
 - Tests: `tests/`
 - Sphinx docs: `docs/sphinx/`

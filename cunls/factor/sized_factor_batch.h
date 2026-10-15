@@ -66,4 +66,5 @@ class SizedFactorBatch : public FactorBatch {
   /** @brief Compile-time constant for the residual dimension. */
   static constexpr size_t residual_size_ = kResidualSize;
 };
+
 }  // namespace cunls

@@ -286,12 +286,13 @@ __global__ void __launch_bounds__(kWarp)
 using KernelPtr = void (*)(int, const int *, float *, size_t, float *, int *);
 
 template <int... Ms>
-constexpr std::array<KernelPtr, sizeof...(Ms)> MakeKernelTable(std::integer_sequence<int, Ms...>) {
+std::array<KernelPtr, sizeof...(Ms)> MakeKernelTable(std::integer_sequence<int, Ms...>) {
   return {&block_tridiagonal_kernel<Ms + 1>...};
 }
 
-/// block_tridiagonal_kernel<M> for M = 1..32, indexed by M - 1.
-constexpr auto kKernels = MakeKernelTable(std::make_integer_sequence<int, 32>{});
+/// block_tridiagonal_kernel<M> for M = 1..32, indexed by M - 1. Not constexpr: nvcc with an MSVC
+/// host does not treat __global__ function addresses as constant expressions.
+const auto kKernels = MakeKernelTable(std::make_integer_sequence<int, 32>{});
 
 template <typename T>
 std::vector<T> Download(const T *device, size_t n) {

@@ -23,6 +23,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/factor_batch.h"
 #include "cunls/robustifier/loss_function_batch.h"
 
@@ -78,7 +79,7 @@ inline size_t ResidualBatchWorkspaceNumFloats(size_t num_residuals) {
  * During evaluation, it computes residuals, applies the loss function to
  * scale residuals and Jacobians, and optionally computes per-residual costs.
  */
-class ResidualBatch {
+class CUNLS_API ResidualBatch {
  public:
   /**
    * @brief Constructs a residual batch from a factor batch and loss function.

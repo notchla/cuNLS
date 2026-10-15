@@ -28,6 +28,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/minimizer/ransac/ransac_kernels.h"
 #include "cunls/minimizer/ransac/ransac_layout.h"
@@ -62,7 +63,7 @@ enum class SlotRows {
  * Iterate() runs one GN / LM step per active slot; every reduction is
  * deterministic.
  */
-class SlotSet {
+class CUNLS_API SlotSet {
  public:
   /** @brief Sizes every buffer for `num_slots` slots, keeping capacity. */
   void Allocate(cudaStream_t stream, const RansacLayout &layout,

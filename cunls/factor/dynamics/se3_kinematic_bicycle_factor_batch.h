@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/sized_factor_batch.h"
 
 namespace cunls {
@@ -43,7 +44,7 @@ namespace cunls {
  * SE3DifferentialDriveFactorBatch. Analytic Jacobians. The planar counterpart
  * is SE2KinematicBicycleFactorBatch.
  */
-class SE3KinematicBicycleFactorBatch : public SizedFactorBatch<6, 6, 2, 2, 6, 2> {
+class CUNLS_CLASS_API SE3KinematicBicycleFactorBatch : public SizedFactorBatch<6, 6, 2, 2, 6, 2> {
  public:
   /**
    * @param time_steps Device array of `capacity` step durations dt_k [s].
@@ -52,11 +53,12 @@ class SE3KinematicBicycleFactorBatch : public SizedFactorBatch<6, 6, 2, 2, 6, 2>
    *        starts at 0: call SetNumActiveFactors(n) before solving.
    * @throws std::invalid_argument if time_steps is null or L is not positive.
    */
-  SE3KinematicBicycleFactorBatch(const float *time_steps, float wheelbase, size_t capacity);
+  CUNLS_API SE3KinematicBicycleFactorBatch(const float *time_steps, float wheelbase,
+                                           size_t capacity);
 
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   const float *time_steps_;

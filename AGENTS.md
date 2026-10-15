@@ -2,7 +2,7 @@
 
 ## Repository Overview
 
-cuNLS is a GPU-accelerated nonlinear least-squares solver library written in CUDA/C++. It targets NVIDIA GPUs and runs on Linux (x86_64 and aarch64).
+cuNLS is a GPU-accelerated nonlinear least-squares solver library written in CUDA/C++. It targets NVIDIA GPUs and runs on Linux (x86_64 and aarch64) and Windows (x86_64, MSVC).
 
 ### Key facts
 
@@ -117,6 +117,32 @@ Within a single job, steps share a host directory (e.g., `./output/`). Use GitHu
 ### 12. Every nightly produces a complete, dated release
 
 A nightly release tagged `nightly-YYYY-MM-DD` includes, per matrix entry: a single C++ tarball containing both shared (`.so`) and static (`.a`) libraries with their respective CMake configs, headers, a Python wheel, and JUnit test result XMLs. All attached as GitHub Release assets with filenames that include the CUDA version and Ubuntu version.
+
+---
+
+## Windows (MSVC)
+
+Windows builds run natively: `scripts/Dockerfile` is Linux-only and Linux containers can't run MSVC. A
+Windows-container setup would need its own Dockerfile, so Windows is the one exception to the Docker rule
+for now. `scripts/build_cunls_windows.ps1`, `test_cunls_windows.ps1`, `build_pycunls_windows.ps1` and
+`test_pycunls_windows.ps1` run from an x64 VS developer shell. Each one merges an `_in_docker.sh`
+wrapper and its inner script, so keep them in step with the bash scripts. Supported: VS 2022 and 2026 (2026 tested
+with CUDA 13.4), CUDA 12.8 and 13.x, Release only. CI does not build Windows.
+
+Symbol export rules (`cunls/common/export.h`). Every header under `cunls/` is installed, and the library
+builds with hidden visibility on Linux too, so a missing annotation also breaks the Linux test link:
+
+- `CUNLS_API` on every class or free function defined in a `.cpp`/`.cu`, `internal::` ones included, and on
+  polymorphic interfaces even when header-only (their typeinfo must be exported). Never on kernels,
+  templates defined in headers, or anonymous-namespace functions.
+- cuDSS classes use `CUNLS_CUDSS_API`.
+- An exported class with move-only members declares its copy operations deleted and its moves defaulted:
+  MSVC instantiates the implicit copy of a dllexport class.
+- Explicit function-template instantiations carry `CUNLS_API` on the instantiation itself: nvcc drops it
+  from the primary declaration.
+- A class derived from `SizedStateBatch` or `SizedFactorBatch` takes `CUNLS_CLASS_API`, with `CUNLS_API` on
+  each member defined out of line (constructors, `Plus`, `Evaluate`). A dllexport class would also export its
+  base specialization, which collides (LNK2005) with a consumer's own instantiation of it.
 
 ---
 

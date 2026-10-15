@@ -23,16 +23,19 @@
  * serialization, append behavior, and empty-input handling.
  */
 
+#include "cunls/common/utils.h"
+
 #include <gtest/gtest.h>
 
 #include <algorithm>
 #include <cstdint>
 #include <cstdio>
+#include <filesystem>
 #include <fstream>
+#include <string>
 #include <vector>
 
 #include "cunls/common/types.h"
-#include "cunls/common/utils.h"
 
 namespace cunls {
 
@@ -125,9 +128,12 @@ void ReadVectorFromFile(const std::string &filename, std::vector<float> &values,
 class UtilsTest : public ::testing::Test {
 protected:
   void SetUp() override {
-    // Create temporary file names
-    matrix_filename_ = "/tmp/test_matrix.bin";
-    vector_filename_ = "/tmp/test_vector.bin";
+    // Named per test: ctest runs these tests as parallel processes.
+    const std::string prefix =
+        std::string("cunls_") + ::testing::UnitTest::GetInstance()->current_test_info()->name();
+    const std::filesystem::path dir = std::filesystem::temp_directory_path();
+    matrix_filename_ = (dir / (prefix + "_matrix.bin")).string();
+    vector_filename_ = (dir / (prefix + "_vector.bin")).string();
 
     // Remove files if they exist
     std::remove(matrix_filename_.c_str());

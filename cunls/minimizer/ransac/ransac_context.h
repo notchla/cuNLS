@@ -27,6 +27,7 @@
 
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/common/pinned_vector.h"
 #include "cunls/common/types.h"
 #include "cunls/minimizer/ransac/hypothesis_scorer.h"
@@ -71,15 +72,15 @@ struct RansacContext {
 };
 
 /** @brief One RANSAC minimization (see RansacMinimizer::Minimize). */
-RansacSummary RunRansac(cudaStream_t stream, Problem &problem,
-                        const RansacMinimizerOptions &options, const SolverSettings &settings,
-                        RansacContext &context);
+CUNLS_API RansacSummary RunRansac(cudaStream_t stream, Problem &problem,
+                                  const RansacMinimizerOptions &options,
+                                  const SolverSettings &settings, RansacContext &context);
 
 /** @brief See RansacMinimizer::InlierMask. */
-const uint8_t *InlierMask(const RansacContext &context, size_t residual_batch_index);
+CUNLS_API const uint8_t *InlierMask(const RansacContext &context, size_t residual_batch_index);
 
 /** @brief See RansacMinimizer::InlierMaskSize. */
-size_t InlierMaskSize(const RansacContext &context, size_t residual_batch_index);
+CUNLS_API size_t InlierMaskSize(const RansacContext &context, size_t residual_batch_index);
 
 }  // namespace ransac_internal
 }  // namespace cunls

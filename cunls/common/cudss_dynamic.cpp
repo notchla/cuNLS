@@ -17,51 +17,110 @@
 
 #include "cunls/common/cudss_dynamic.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <dlfcn.h>
+#endif
 
 #include <stdexcept>
 #include <string>
+
+#ifdef _WIN32
+#define CUNLS_CUDSS_LIBRARY "cudss64_0.dll"
+#define CUNLS_LIBRARY_PATH_VARIABLE "PATH"
+#else
+#define CUNLS_CUDSS_LIBRARY "libcudss.so"
+#define CUNLS_LIBRARY_PATH_VARIABLE "LD_LIBRARY_PATH"
+#endif
 
 namespace cunls {
 
 namespace {
 
-constexpr const char *kCudssSonameCandidates[] = {"libcudss.so.0", "libcudss.so"};
+#ifdef _WIN32
+constexpr const char *kCudssLibraryCandidates[] = {CUNLS_CUDSS_LIBRARY};
+#else
+constexpr const char *kCudssLibraryCandidates[] = {"libcudss.so.0", CUNLS_CUDSS_LIBRARY};
+#endif
 
 constexpr const char *kCudssMissingMessage =
     "cuNLS: the cuDSS-based sparse linear solver (SparseLinearSolverType::cuDSS) "
-    "requires libcudss.so, which could not be found. cuDSS ships as a separate "
+    "requires " CUNLS_CUDSS_LIBRARY
+    ", which could not be found. cuDSS ships as a separate "
     "binary from cunls: download the matching cuDSS release from "
     "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/ (or "
-    "install your platform's cudss package), then add the directory containing "
-    "libcudss.so to LD_LIBRARY_PATH before creating a cuDSS solver. Other cunls "
+    "install your platform's cudss package), then add the directory containing " CUNLS_CUDSS_LIBRARY
+    " to " CUNLS_LIBRARY_PATH_VARIABLE
+    " before creating a cuDSS solver. Other cunls "
     "solvers (DenseLDLT, DenseCholesky, DenseQR, BlockSparsePCG) do not require "
     "cuDSS and are unaffected.";
+
+#ifdef _WIN32
+void *OpenLibrary(const char *name) {
+  // The default-dirs search honours AddDllDirectory (Python's os.add_dll_directory)
+  // but skips PATH, so fall back to the classic search order for PATH.
+  HMODULE handle = LoadLibraryExA(name, nullptr, LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
+  if (handle == nullptr) {
+    handle = LoadLibraryA(name);
+  }
+  return handle;
+}
+
+void CloseLibrary(void *library) { FreeLibrary(static_cast<HMODULE>(library)); }
+
+void *FindSymbol(void *library, const char *name, std::string &error) {
+  void *symbol = reinterpret_cast<void *>(GetProcAddress(static_cast<HMODULE>(library), name));
+  if (symbol == nullptr) {
+    char buffer[256] = {};
+    DWORD length = FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                                  nullptr, GetLastError(), 0, buffer, sizeof(buffer), nullptr);
+    while (length > 0 && (buffer[length - 1] == '\r' || buffer[length - 1] == '\n')) --length;
+    error = length > 0 ? std::string(buffer, length) : "symbol not found";
+  }
+  return symbol;
+}
+#else
+void *OpenLibrary(const char *name) { return dlopen(name, RTLD_NOW | RTLD_GLOBAL); }
+
+void CloseLibrary(void *library) { dlclose(library); }
+
+void *FindSymbol(void *library, const char *name, std::string &error) {
+  dlerror();  // Clear any pending error.
+  void *symbol = dlsym(library, name);
+  const char *dlsym_error = dlerror();
+  if (dlsym_error != nullptr || symbol == nullptr) {
+    error = dlsym_error != nullptr ? dlsym_error : "symbol not found";
+    return nullptr;
+  }
+  return symbol;
+}
+#endif
 
 /**
  * @brief Resolves a cuDSS symbol, throwing a descriptive error if missing.
  *
- * A missing symbol (as opposed to a missing library) means a libcudss.so was
+ * A missing symbol (as opposed to a missing library) means a cuDSS library was
  * found but is a version incompatible with the cuDSS headers cunls was
  * built against.
  */
 template <typename FnPtr>
 FnPtr LoadCudssSymbol(void *library_handle, const char *symbol_name) {
-  dlerror();  // Clear any pending error.
-  void *symbol = dlsym(library_handle, symbol_name);
-  const char *dlsym_error = dlerror();
-  if (dlsym_error != nullptr || symbol == nullptr) {
+  std::string error;
+  void *symbol = FindSymbol(library_handle, symbol_name, error);
+  if (symbol == nullptr) {
     throw std::runtime_error(
-        std::string("cuNLS: found libcudss.so but it is missing the symbol '") + symbol_name +
+        std::string("cuNLS: found " CUNLS_CUDSS_LIBRARY " but it is missing the symbol '") +
+        symbol_name +
         "'. The loaded cuDSS library is likely a version incompatible with the "
         "cuDSS headers cunls was built against. (" +
-        (dlsym_error != nullptr ? dlsym_error : "symbol not found") + ")");
+        error + ")");
   }
   return reinterpret_cast<FnPtr>(symbol);
 }
 
 /**
- * @brief Owns the dlopen() handle and the resolved cuDSS API table.
+ * @brief Owns the library handle and the resolved cuDSS API table.
  */
 struct CudssLoader {
   void *library_handle = nullptr;
@@ -71,8 +130,8 @@ struct CudssLoader {
 };
 
 void *OpenCudssLibrary() {
-  for (const char *soname : kCudssSonameCandidates) {
-    void *handle = dlopen(soname, RTLD_NOW | RTLD_GLOBAL);
+  for (const char *name : kCudssLibraryCandidates) {
+    void *handle = OpenLibrary(name);
     if (handle != nullptr) {
       return handle;
     }
@@ -81,7 +140,7 @@ void *OpenCudssLibrary() {
 }
 
 /**
- * @brief Verifies the loaded libcudss.so reports the same MAJOR.MINOR
+ * @brief Verifies the loaded cuDSS library reports the same MAJOR.MINOR
  * version as the cuDSS headers cunls was compiled against.
  *
  * A mismatched version is the same failure mode as a missing symbol (an ABI
@@ -93,18 +152,18 @@ void CheckCudssVersion(const CudssApi &api) {
   int runtime_minor = 0;
   if (api.GetProperty(MAJOR_VERSION, &runtime_major) != CUDSS_STATUS_SUCCESS ||
       api.GetProperty(MINOR_VERSION, &runtime_minor) != CUDSS_STATUS_SUCCESS) {
-    throw std::runtime_error(
-        "cuNLS: found libcudss.so but could not query its version via "
-        "cudssGetProperty(). The loaded cuDSS library is likely a version "
-        "incompatible with the cuDSS headers cunls was built against.");
+    throw std::runtime_error("cuNLS: found " CUNLS_CUDSS_LIBRARY
+                             " but could not query its version via "
+                             "cudssGetProperty(). The loaded cuDSS library is likely a version "
+                             "incompatible with the cuDSS headers cunls was built against.");
   }
 
   if (runtime_major != CUDSS_VERSION_MAJOR || runtime_minor != CUDSS_VERSION_MINOR) {
     throw std::runtime_error(
-        "cuNLS: found libcudss.so version " + std::to_string(runtime_major) + "." +
+        "cuNLS: found " CUNLS_CUDSS_LIBRARY " version " + std::to_string(runtime_major) + "." +
         std::to_string(runtime_minor) + ", but cunls was built against cuDSS " +
         std::to_string(CUDSS_VERSION_MAJOR) + "." + std::to_string(CUDSS_VERSION_MINOR) +
-        " headers. Point LD_LIBRARY_PATH at a matching cuDSS " +
+        " headers. Point " CUNLS_LIBRARY_PATH_VARIABLE " at a matching cuDSS " +
         std::to_string(CUDSS_VERSION_MAJOR) + "." + std::to_string(CUDSS_VERSION_MINOR) +
         ".x release instead.");
   }
@@ -153,7 +212,7 @@ CudssLoader LoadCudss() {
     loader.available = true;
   } catch (const std::exception &error) {
     loader.error_message = error.what();
-    dlclose(loader.library_handle);
+    CloseLibrary(loader.library_handle);
     loader.library_handle = nullptr;
     loader.api = CudssApi{};
     loader.available = false;

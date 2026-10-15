@@ -20,6 +20,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/cusparse_helper.h"
+#include "cunls/common/export.h"
 #include "cunls/minimizer/minimizer.h"
 
 namespace cunls {
@@ -134,7 +135,7 @@ struct LevenbergMarquardtMinimizerOptions {
  * See Minimizer for the iteration and LevenbergMarquardtMinimizerOptions for
  * the settings.
  */
-class LevenbergMarquardtMinimizer : public Minimizer {
+class CUNLS_API LevenbergMarquardtMinimizer : public Minimizer {
  public:
   /**
    * @brief Constructs the minimizer; see LevenbergMarquardtMinimizerOptions.

@@ -17,8 +17,10 @@
 
 #pragma once
 
-#include "cunls/robustifier/loss_function_batch.h"
 #include <cuda_runtime.h>
+
+#include "cunls/common/export.h"
+#include "cunls/robustifier/loss_function_batch.h"
 
 namespace cunls {
 
@@ -33,8 +35,8 @@ namespace cunls {
  *
  * The Arctan loss grows sublinearly for large residuals and is smooth.
  */
-class ArctanLossFunctionBatch : public LossFunctionBatch {
-public:
+class CUNLS_API ArctanLossFunctionBatch : public LossFunctionBatch {
+ public:
   /**
    * @brief Constructs an Arctan loss with the given parameters.
    * @param a Scale parameter (a > 0).

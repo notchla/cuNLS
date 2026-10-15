@@ -18,6 +18,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/helper.h"
+#include "cunls/state/vector_state_batch.h"
 
 namespace cunls {
 

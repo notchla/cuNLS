@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/linear_solver/dense_linear_solver_base.h"
 
@@ -46,7 +47,7 @@ namespace cunls {
  * synchronization.  This avoids per-kernel sync and gives the caller an
  * accurate bool return from Solve().
  */
-class DenseLDLTSolver : public DenseLinearSolverBase {
+class CUNLS_API DenseLDLTSolver : public DenseLinearSolverBase {
  protected:
   /**
    * @copydoc DenseLinearSolverBase::EnsureBuffersSize

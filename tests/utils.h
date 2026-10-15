@@ -430,11 +430,10 @@ inline void ConfigureTestSolver(int solver_id, MinimizerOptions &options) {
     return;
   }
   options.sparse_linear_solver_type = SparseLinearSolverType::cuDSS;
-  options.sparse_linear_solver_config.cudss_solver_options = {
-      .mode = static_cast<cuDSSLinearSolverMode>(solver_id),
-      .nthreads = 1,
-      .threading_lib_path = "",
-  };
+  cuDSSLinearSolverOptions &cudss = options.sparse_linear_solver_config.cudss_solver_options;
+  cudss = cuDSSLinearSolverOptions{};
+  cudss.mode = static_cast<cuDSSLinearSolverMode>(solver_id);
+  cudss.nthreads = 1;
 }
 
 /** Reads CUNLS_PCG_BLOCK_SIZE; defaults to ``fallback`` if unset/invalid. */

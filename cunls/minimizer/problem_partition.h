@@ -29,6 +29,7 @@
 #include <vector>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/minimizer/minimizer_state.h"
 #include "cunls/minimizer/problem.h"
 
@@ -41,8 +42,8 @@ namespace cunls {
  * Writes NumActiveFactors() ints to `factor_problem`; asynchronous on
  * `stream`. The partition itself is validated by the minimizers.
  */
-void ComputeFactorProblemIds(cudaStream_t stream, const Problem &problem,
-                             size_t residual_batch_index, int *factor_problem);
+CUNLS_API void ComputeFactorProblemIds(cudaStream_t stream, const Problem &problem,
+                                       size_t residual_batch_index, int *factor_problem);
 
 /** @brief Parameters of ProblemPartition::StepControl. */
 struct StepControlParams {
@@ -72,7 +73,7 @@ enum StepOutcome : int {
  * and number of still-active subproblems in a 2-float device array (one
  * read-back per iteration).
  */
-class ProblemPartition {
+class CUNLS_API ProblemPartition {
  public:
   /**
    * @brief Sizes the per-subproblem arrays and, with a partition, builds the

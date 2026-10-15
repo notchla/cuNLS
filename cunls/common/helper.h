@@ -38,18 +38,20 @@ namespace cunls {
  * @param is_throw     Compile-time boolean: if true, throws on error; if false,
  *                     only logs.
  */
-#define CHECK_CUDA_ERROR(status, to_string_fn, is_throw)                  \
-  do {                                                                    \
-    auto ret = (status);                                                  \
-    if (ret != 0) {                                                       \
-      std::stringstream msg;                                              \
-      msg << "[CUDA] error " << (to_string_fn)(ret) << "(" << ret << ")"; \
-      msg << " in " << LOCATION << std::endl;                             \
-      LogError(msg.str());                                                \
-      if constexpr (is_throw) {                                           \
-        throw std::runtime_error(msg.str());                              \
-      }                                                                   \
-    }                                                                     \
+#define CHECK_CUDA_ERROR(status, to_string_fn, is_throw)                                         \
+  do {                                                                                           \
+    auto ret = (status);                                                                         \
+    if (ret != 0) {                                                                              \
+      /* cudaGetErrorString returns null when no driver is installed. */                         \
+      const char *ret_str = (to_string_fn)(ret);                                                 \
+      std::stringstream msg;                                                                     \
+      msg << "[CUDA] error " << (ret_str != nullptr ? ret_str : "unknown") << "(" << ret << ")"; \
+      msg << " in " << LOCATION << std::endl;                                                    \
+      LogError(msg.str());                                                                       \
+      if constexpr (is_throw) {                                                                  \
+        throw std::runtime_error(msg.str());                                                     \
+      }                                                                                          \
+    }                                                                                            \
   } while (0)
 
 /**

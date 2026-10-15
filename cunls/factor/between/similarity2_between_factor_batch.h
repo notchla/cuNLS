@@ -7,6 +7,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -21,16 +22,17 @@ namespace cunls {
  *   H_left  = -J_l^{-1}(r) * Ad(Delta)
  *   H_right =  J_r^{-1}(r)
  */
-class Similarity2BetweenFactorBatch : public SizedFactorBatch<4, 4, 4> {
+class CUNLS_CLASS_API Similarity2BetweenFactorBatch : public SizedFactorBatch<4, 4, 4> {
   using Base = SizedFactorBatch<4, 4, 4>;
 
  public:
-  Similarity2BetweenFactorBatch(const Similarity2Transform *pose_deltas_ptr, size_t capacity);
+  CUNLS_API Similarity2BetweenFactorBatch(const Similarity2Transform *pose_deltas_ptr,
+                                          size_t capacity);
 
   /** @brief Evaluates residuals and Jacobians; follows FactorBatch::Evaluate's item contract. */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   Similarity2BetweenFactorBatch() = default;

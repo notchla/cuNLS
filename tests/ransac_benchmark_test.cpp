@@ -23,12 +23,11 @@
  *   3. outlier detection quality (precision / recall of the inlier mask).
  *
  * Skipped unless CUNLS_RANSAC_BENCHMARK=1. Results are printed as markdown
- * tables and written as CSV to /tmp/cunls_ransac_bench/.
+ * tables and written as CSV to cunls_ransac_bench/ in the system temp directory.
  * CUNLS_RANSAC_BENCH_TRIALS overrides the number of trials per robustness cell.
  */
 
 #include <gtest/gtest.h>
-#include <sys/stat.h>
 
 #include <algorithm>
 #include <array>
@@ -36,6 +35,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <functional>
 #include <memory>
@@ -89,8 +89,9 @@ bool Selected(size_t points, const char *label) {
 }
 
 std::string OutDir() {
-  ::mkdir("/tmp/cunls_ransac_bench", 0755);
-  return "/tmp/cunls_ransac_bench/";
+  const std::filesystem::path dir = std::filesystem::temp_directory_path() / "cunls_ransac_bench";
+  std::filesystem::create_directories(dir);
+  return (dir / "").string();
 }
 
 enum class Method { kGN, kLM, kLMHuber, kLMCauchy, kRansacGN, kRansacLM };

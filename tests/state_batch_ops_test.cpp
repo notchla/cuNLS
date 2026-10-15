@@ -32,6 +32,7 @@
 #include "cunls/common/helper.h"
 #include "cunls/common/profiler.h"
 #include "cunls/common/types.h"
+#include "cunls/state/se3_state_batch.h"
 #include "cunls/state/vector_state_batch.h"
 #include "tests/utils.h"
 
@@ -178,4 +179,20 @@ TEST_F(StateBatchOpsTest, Plus) {
   this->TestStateValues(points_4d.get());
   this->TestStateValues(points_5d.get());
 }
+
+/** A user state batch whose base is also the base of a built-in exported class. */
+class UserSE3LayoutStateBatch : public SE3StateBatch::Base {
+ public:
+  using SE3StateBatch::Base::SizedStateBatch;
+  void Plus(const float *, const float *, float *, cudaStream_t, size_t = 1) override {}
+};
+
+// Links only if the library doesn't export SizedStateBatch<16, 6> (LNK2005 on MSVC otherwise).
+TEST(SizedStateBatchTest, UserBatchSharesBuiltInBase) {
+  SE3StateBatch built_in(nullptr, 0);
+  UserSE3LayoutStateBatch user(nullptr, 0);
+  EXPECT_EQ(built_in.AmbientSize(), user.AmbientSize());
+  EXPECT_EQ(built_in.TangentSize(), user.TangentSize());
+}
+
 }  // namespace cunls

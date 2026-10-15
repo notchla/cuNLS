@@ -21,6 +21,8 @@
 
 #include <stdexcept>
 
+#include "cunls/common/export.h"
+
 namespace cunls {
 
 /**
@@ -34,7 +36,7 @@ namespace cunls {
  * Derived classes must implement the Plus() operation that applies a
  * tangent-space update to the states according to the manifold structure.
  */
-class StateBatch {
+class CUNLS_API StateBatch {
  public:
   /** @brief Virtual destructor. */
   virtual ~StateBatch() = default;

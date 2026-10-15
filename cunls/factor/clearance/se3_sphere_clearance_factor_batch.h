@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/sized_factor_batch.h"
 
 namespace cunls {
@@ -37,7 +38,7 @@ namespace cunls {
  * (SE3StateBatch). Jacobian: -(p - center)ᵀ R / ‖p - center‖ on the translation part
  * of the tangent, 0 on the rotation part (0 when p is at the center).
  */
-class SE3SphereClearanceFactorBatch : public SizedFactorBatch<1, 6> {
+class CUNLS_CLASS_API SE3SphereClearanceFactorBatch : public SizedFactorBatch<1, 6> {
  public:
   /**
    * @param obstacles Device array of 4 floats per factor: the center
@@ -47,11 +48,11 @@ class SE3SphereClearanceFactorBatch : public SizedFactorBatch<1, 6> {
    *        starts at 0: call SetNumActiveFactors(n) before solving.
    * @throws std::invalid_argument if obstacles is null.
    */
-  SE3SphereClearanceFactorBatch(const float *obstacles, float margin, size_t capacity);
+  CUNLS_API SE3SphereClearanceFactorBatch(const float *obstacles, float margin, size_t capacity);
 
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   const float *obstacles_;

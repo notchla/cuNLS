@@ -19,6 +19,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/helper.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/information/information_factor_batch.h"
@@ -70,9 +71,9 @@ namespace cunls {
  * (`num_factors * (2*Dim) * (2*Dim)` floats total).
  */
 template <int Dim>
-void ComputeConstantVelocitySqrtInformation(cudaStream_t stream, const float *dt_ptr,
-                                            const float *qc_diag_ptr, size_t num_factors,
-                                            float *sqrt_information_out);
+CUNLS_API void ComputeConstantVelocitySqrtInformation(cudaStream_t stream, const float *dt_ptr,
+                                                      const float *qc_diag_ptr, size_t num_factors,
+                                                      float *sqrt_information_out);
 
 /**
  * @brief Computes per-factor square-root information matrices for the
@@ -108,9 +109,10 @@ void ComputeConstantVelocitySqrtInformation(cudaStream_t stream, const float *dt
  * information matrices, row-major `(3*Dim) x (3*Dim)` per factor.
  */
 template <int Dim>
-void ComputeConstantAccelerationSqrtInformation(cudaStream_t stream, const float *dt_ptr,
-                                                const float *qc_diag_ptr, size_t num_factors,
-                                                float *sqrt_information_out);
+CUNLS_API void ComputeConstantAccelerationSqrtInformation(cudaStream_t stream, const float *dt_ptr,
+                                                          const float *qc_diag_ptr,
+                                                          size_t num_factors,
+                                                          float *sqrt_information_out);
 
 namespace detail {
 

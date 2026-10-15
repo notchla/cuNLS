@@ -6,3 +6,13 @@ viz/
 
 # Design notes are kept locally, not in the repository
 docs/design/
+build_docker/
+build_windows/
+dist/
+python/build/
+.venv*/
+__pycache__/
+
+# Visual Studio "Open Folder" state and its default CMake build directory
+.vs/
+out/

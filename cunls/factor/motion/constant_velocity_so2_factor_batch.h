@@ -19,6 +19,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -36,18 +37,18 @@ namespace cunls {
  *
  * Inherits from SizedFactorBatch<2, 1, 1, 1, 1>.
  */
-class ConstantVelocitySO2FactorBatch : public SizedFactorBatch<2, 1, 1, 1, 1> {
+class CUNLS_CLASS_API ConstantVelocitySO2FactorBatch : public SizedFactorBatch<2, 1, 1, 1, 1> {
  public:
-  ConstantVelocitySO2FactorBatch(const float *dt_ptr, size_t capacity);
+  CUNLS_API ConstantVelocitySO2FactorBatch(const float *dt_ptr, size_t capacity);
 
   /**
    * @brief Evaluates residuals and (optionally) Jacobians. Follows
    * FactorBatch::Evaluate's item contract: item t reads the time delta of
    * factor `factor_ids[t]` (or `t % NumActiveFactors()`) and the states of item t.
    */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   ConstantVelocitySO2FactorBatch() = delete;

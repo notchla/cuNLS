@@ -21,6 +21,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "cunls/common/export.h"
 #include "cunls/common/log.h"
 #include "cunls/robustifier/loss_function_batch.h"
 
@@ -37,7 +38,7 @@ namespace cunls {
  * @param num_losses Number of triplets.
  * @param stream     CUDA stream for asynchronous execution.
  */
-void ApplyScaling(float a, float3 *out, int num_losses, cudaStream_t stream);
+CUNLS_API void ApplyScaling(float a, float3 *out, int num_losses, cudaStream_t stream);
 
 /**
  * @brief Wrapper loss function that scales the output of another loss function.

@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/minimizer/minimizer.h"
 #include "cunls/minimizer/problem.h"
 #include "cunls/minimizer/ransac/ransac_context.h"
@@ -253,7 +254,7 @@ struct RansacSummary : MinimizerSummary {
  * RansacLevenbergMarquardtMinimizer, and use a `RansacMinimizer &` to accept
  * either.
  */
-class RansacMinimizer {
+class CUNLS_API RansacMinimizer {
  public:
   virtual ~RansacMinimizer() = default;
   RansacMinimizer(const RansacMinimizer &) = delete;
@@ -323,7 +324,7 @@ class RansacMinimizer {
  * at the first step that does not, or when the relative cost decrease is at
  * most cost_tolerance or ‖δ‖² at most state_tolerance. See RansacMinimizer.
  */
-class RansacGaussNewtonMinimizer : public RansacMinimizer {
+class CUNLS_API RansacGaussNewtonMinimizer : public RansacMinimizer {
  public:
   /** @brief Constructs the minimizer; see RansacMinimizerOptions. */
   explicit RansacGaussNewtonMinimizer(
@@ -341,7 +342,7 @@ class RansacGaussNewtonMinimizer : public RansacMinimizer {
  * lambda_max. Convergence as in RansacGaussNewtonMinimizer. See
  * RansacMinimizer.
  */
-class RansacLevenbergMarquardtMinimizer : public RansacMinimizer {
+class CUNLS_API RansacLevenbergMarquardtMinimizer : public RansacMinimizer {
  public:
   /** @brief Constructs the minimizer; see RansacLevenbergMarquardtMinimizerOptions. */
   explicit RansacLevenbergMarquardtMinimizer(

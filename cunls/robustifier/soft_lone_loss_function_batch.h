@@ -17,8 +17,10 @@
 
 #pragma once
 
-#include "cunls/robustifier/loss_function_batch.h"
 #include <cuda_runtime.h>
+
+#include "cunls/common/export.h"
+#include "cunls/robustifier/loss_function_batch.h"
 
 namespace cunls {
 
@@ -34,8 +36,8 @@ namespace cunls {
  * Parameters b and c control the shape; larger c makes the loss grow more
  * slowly with residual magnitude.
  */
-class SoftLOneLossFunctionBatch : public LossFunctionBatch {
-public:
+class CUNLS_API SoftLOneLossFunctionBatch : public LossFunctionBatch {
+ public:
   /**
    * @brief Constructs a SoftLOne loss with the given parameters.
    * @param b Scale parameter (b > 0).

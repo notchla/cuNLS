@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/sized_factor_batch.h"
 
 namespace cunls {
@@ -38,7 +39,7 @@ namespace cunls {
  * Ad(Exp(-dt ξ)) (X_k), -dt J_l⁻¹(r) J_r(dt ξ) (ξ_k), J_r⁻¹(r) (X_{k+1}).
  * Attitude kinematics (satellites, gimbals, IMU-rate attitude).
  */
-class SO3KinematicsFactorBatch : public SizedFactorBatch<3, 3, 3, 3> {
+class CUNLS_CLASS_API SO3KinematicsFactorBatch : public SizedFactorBatch<3, 3, 3, 3> {
  public:
   /**
    * @param time_steps Device array of `capacity` step durations dt_k [s].
@@ -46,11 +47,11 @@ class SO3KinematicsFactorBatch : public SizedFactorBatch<3, 3, 3, 3> {
    *        starts at 0: call SetNumActiveFactors(n) before solving.
    * @throws std::invalid_argument if time_steps is null.
    */
-  SO3KinematicsFactorBatch(const float *time_steps, size_t capacity);
+  CUNLS_API SO3KinematicsFactorBatch(const float *time_steps, size_t capacity);
 
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   const float *time_steps_;

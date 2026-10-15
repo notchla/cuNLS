@@ -19,6 +19,8 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
+
 namespace cunls {
 
 /**
@@ -32,8 +34,8 @@ namespace cunls {
  *   - rho.y = rho'(s):  the first derivative w.r.t. s
  *   - rho.z = rho''(s): the second derivative w.r.t. s
  */
-class LossFunctionBatch {
-public:
+class CUNLS_API LossFunctionBatch {
+ public:
   /**
    * @brief Evaluates the loss function for a batch of squared residuals on the
    * GPU.

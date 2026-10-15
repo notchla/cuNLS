@@ -19,6 +19,8 @@
 #include <cstdint>
 #include <string>
 
+#include "cunls/common/export.h"
+
 namespace cunls::profiler {
 
 /**
@@ -28,7 +30,7 @@ namespace cunls::profiler {
  * enabling automatic scope-based profiling annotation. Non-copyable
  * and non-movable to ensure one-to-one scope-to-range mapping.
  */
-class ScopedRange {
+class CUNLS_API ScopedRange {
  public:
   ScopedRange(const ScopedRange &) = delete;
   ScopedRange &operator=(const ScopedRange &) = delete;
@@ -59,7 +61,7 @@ namespace internal {
  * Starts a colored NVTX range within a specific domain on construction
  * and ends it on destruction. Used internally by Domain::CreateDomainRange.
  */
-class DomainRange {
+class CUNLS_API DomainRange {
  public:
   DomainRange(const DomainRange &) = delete;
   DomainRange &operator=(const DomainRange &) = delete;
@@ -96,7 +98,7 @@ class DomainRange {
  *
  * Non-copyable and non-movable to ensure unique domain ownership.
  */
-class Domain {
+class CUNLS_API Domain {
  public:
   Domain(const Domain &) = delete;
   Domain &operator=(const Domain &) = delete;

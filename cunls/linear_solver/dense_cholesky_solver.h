@@ -20,6 +20,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/cusolver_helper.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/linear_solver/dense_linear_solver_base.h"
 
@@ -40,7 +41,7 @@ namespace cunls {
  * Returns false from Solve() if the matrix is not positive-definite (cuSOLVER
  * reports a non-zero devInfo from potrf).
  */
-class DenseCholeskySolver : public DenseLinearSolverBase {
+class CUNLS_API DenseCholeskySolver : public DenseLinearSolverBase {
  protected:
   /** @copydoc DenseLinearSolverBase::EnsureBuffersSize */
   void EnsureBuffersSize(cudaStream_t stream, size_t n) final;

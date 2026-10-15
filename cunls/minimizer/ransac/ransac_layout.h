@@ -28,6 +28,7 @@
 
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/minimizer/problem.h"
 
@@ -74,8 +75,15 @@ struct ResidualLayout {
  * Build() throws std::invalid_argument with an actionable message for every
  * unsupported configuration. Rebuilding keeps device capacity.
  */
-class RansacLayout {
+class CUNLS_API RansacLayout {
  public:
+  RansacLayout() = default;
+  // Declared explicitly: dllexport instantiates the implicit copy, which the members can't support.
+  RansacLayout(const RansacLayout &) = delete;
+  RansacLayout &operator=(const RansacLayout &) = delete;
+  RansacLayout(RansacLayout &&) = default;
+  RansacLayout &operator=(RansacLayout &&) = default;
+
   void Build(const Problem &problem, const RansacMinimizerOptions &options);
 
   const std::vector<StateLayout> &states() const { return states_; }
@@ -105,7 +113,7 @@ class RansacLayout {
 };
 
 /** @brief Throws std::invalid_argument(message) after logging it. */
-[[noreturn]] void FailConfiguration(const std::string &message);
+[[noreturn]] CUNLS_API void FailConfiguration(const std::string &message);
 
 }  // namespace ransac_internal
 }  // namespace cunls

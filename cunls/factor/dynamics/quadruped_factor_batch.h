@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/sized_factor_batch.h"
 
 namespace cunls {
@@ -55,7 +56,7 @@ struct QuadrupedParameters {
  * model. Contact constraints (unilateral normal force, friction cone, zero
  * force in swing) are separate constraint factors.
  */
-class QuadrupedFactorBatch : public SizedFactorBatch<12, 6, 3, 3, 12, 6, 3, 3> {
+class CUNLS_CLASS_API QuadrupedFactorBatch : public SizedFactorBatch<12, 6, 3, 3, 12, 6, 3, 3> {
  public:
   /**
    * @param time_steps Device array of `capacity` step durations dt_k [s].
@@ -67,12 +68,13 @@ class QuadrupedFactorBatch : public SizedFactorBatch<12, 6, 3, 3, 12, 6, 3, 3> {
    *        starts at 0: call SetNumActiveFactors(n) before solving.
    * @throws std::invalid_argument if a buffer is null or mass, inertia are not positive.
    */
-  QuadrupedFactorBatch(const float *time_steps, const float *contacts, const float *foot_positions,
-                       const QuadrupedParameters &parameters, size_t capacity);
+  CUNLS_API QuadrupedFactorBatch(const float *time_steps, const float *contacts,
+                                 const float *foot_positions, const QuadrupedParameters &parameters,
+                                 size_t capacity);
 
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
   const QuadrupedParameters &Parameters() const { return parameters_; }
 

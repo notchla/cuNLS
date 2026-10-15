@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <vector>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 
 namespace cunls {
@@ -61,7 +62,7 @@ struct HessianBatchLayout {
  *
  * `output.values` is resized but left uninitialized.
  */
-class HessianStructureBuilder {
+class CUNLS_API HessianStructureBuilder {
  public:
   /**
    * @brief Builds the scalar CSR pattern, and optionally the scatter maps.

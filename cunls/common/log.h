@@ -21,6 +21,8 @@
 #include <string_view>
 #include <tuple>
 
+#include "cunls/common/export.h"
+
 // Check for C++20 support
 #if defined(__cpp_lib_format) && __cpp_lib_format >= 201907L
 #include <format>
@@ -47,8 +49,8 @@ enum class Sink { Console = 0, File, ConsoleAndFile };
  * @param sink      Where to send log output (console, file, or both).
  * @param file_path Path to the log file (required when sink includes File).
  */
-void SetLoggerOptions(Verbosity verbosity, Sink sink = Sink::Console,
-                      const std::string &file_path = "");
+CUNLS_API void SetLoggerOptions(Verbosity verbosity, Sink sink = Sink::Console,
+                                const std::string &file_path = "");
 
 /**
  * @brief Logs a message at the given verbosity level.
@@ -56,31 +58,31 @@ void SetLoggerOptions(Verbosity verbosity, Sink sink = Sink::Console,
  * @param verbosity The severity level of this message.
  * @param msg       The message string to log.
  */
-void Log(Verbosity verbosity, std::string_view msg);
+CUNLS_API void Log(Verbosity verbosity, std::string_view msg);
 
 /**
  * @brief Logs a message at Error verbosity.
  * @param msg The error message to log.
  */
-void LogError(std::string_view msg);
+CUNLS_API void LogError(std::string_view msg);
 
 /**
  * @brief Logs a message at Warning verbosity.
  * @param msg The warning message to log.
  */
-void LogWarning(std::string_view msg);
+CUNLS_API void LogWarning(std::string_view msg);
 
 /**
  * @brief Logs a message at Message (informational) verbosity.
  * @param msg The informational message to log.
  */
-void LogMessage(std::string_view msg);
+CUNLS_API void LogMessage(std::string_view msg);
 
 /**
  * @brief Logs a message at Debug verbosity.
  * @param msg The debug message to log.
  */
-void LogDebug(std::string_view msg);
+CUNLS_API void LogDebug(std::string_view msg);
 
 #ifdef CPP_20_OR_GREATER
 /**

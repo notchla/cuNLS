@@ -82,7 +82,7 @@ See [`python/examples`](python/examples/README.md) to run them.
 | **Built-in factors** | Reprojection, PnP, between (SO(2)/SO(3)/SE(2)/SE(3)/Sim(2)/Sim(3)/SL(4)/vector), point-to-point, point-to-plane, symmetric point-to-plane, prior, constant-velocity/constant-acceleration motion priors (SO(2)/SO(3)/SE(2)/SE(3)) |
 | **Custom factors and states** | CuPy / NVIDIA Warp kernels in Python, or user-defined CUDA kernels via `SizedFactorBatch` / `SizedStateBatch` in C++; the same types work with every minimizer, including RANSAC — see [Custom factors and states](docs/sphinx/custom_factors_and_states.rst) |
 | **Numeric Jacobians** | Finite-difference Jacobians for any factor batch (manifold-aware, reuses each state's `Plus` retraction), selectable globally (`MinimizerOptions.jacobian_mode`) or per factor group (the `jacobian_mode_override` of `Problem.add_factor_batch`) — write a factor with only a residual and let cuNLS differentiate it; see [Numeric Jacobians](docs/sphinx/numeric_jacobians.rst) |
-| **Linear solver** | Block-sparse PCG (variable block-Jacobi preconditioner, default), NVIDIA cuDSS (optional, loaded via `dlopen()` at runtime — see [C++ Installation](docs/sphinx/installation.rst)), dense LDLT, dense Cholesky (cuSOLVER), dense QR (cuSOLVER) |
+| **Linear solver** | Block-sparse PCG (variable block-Jacobi preconditioner, default), NVIDIA cuDSS (optional, loaded at runtime — see [C++ Installation](docs/sphinx/installation.rst)), dense LDLT, dense Cholesky (cuSOLVER), dense QR (cuSOLVER) |
 | **Safety checks** | Optional runtime validation (linear-solver diagnostics and more), off by default for low-latency solves — enable with `MinimizerOptions::disable_safety_checks = false` when debugging |
 | **Execution model** | Fully asynchronous via CUDA streams |
 
@@ -126,6 +126,21 @@ cd python
 pip install scikit-build-core nanobind
 pip wheel . --no-build-isolation --no-deps --wheel-dir ../dist
 ```
+
+#### Build the wheel on Windows
+
+From an **x64 Native Tools Command Prompt for VS** (see [Windows (MSVC)](#windows-msvc) for the
+toolchain), in a Python environment:
+
+```bat
+pip install scikit-build-core nanobind ninja
+powershell -ExecutionPolicy Bypass -File scripts\build_pycunls_windows.ps1 dist
+```
+
+Pass extra CMake flags in `CMAKE_ARGS`, with forward slashes in paths, never in `SKBUILD_CMAKE_ARGS`:
+that variable replaces the flags in `pyproject.toml` and produces a wheel without the extension.
+`import pycunls` finds the CUDA DLLs through `CUDA_PATH`. The extension also needs `MSVCP140.dll` from
+the Visual C++ Redistributable, which Python does not ship.
 
 #### Install the wheel
 
@@ -212,7 +227,8 @@ By default this builds a shared library. Pass `-DBUILD_SHARED_LIBS=OFF` to
 build a static library instead.
 
 CUDA compiler and architecture selections supplied by the caller are preserved. Without one,
-`/usr/local/cuda/bin/nvcc` is used when it exists. For example, a native Jetson Orin build can avoid
+`/usr/local/cuda/bin/nvcc` is used when it exists, and the architectures default to
+`75;80;86;89`, plus `100;120` (Blackwell) with CUDA 12.8 or later. For example, a native Jetson Orin build can avoid
 PTX JIT compatibility requirements by compiling an SM 87 cubin:
 
 ```bash
@@ -228,6 +244,36 @@ Set `-DCUDSS_PLATFORM` explicitly to override it.
 Pass `-DCUNLS_ENABLE_CUDSS=OFF` to build without the cuDSS backend: the cuDSS archive is not
 downloaded and `SparseLinearSolverType::cuDSS` throws `std::runtime_error` when a solver is created.
 All other solvers work as usual, and the C++ tests skip the cuDSS cases.
+
+#### Windows (MSVC)
+
+Windows builds run natively, without Docker. Requirements: Visual Studio 2022 or 2026 (Build Tools with
+the "Desktop development with C++" workload), CUDA Toolkit 12.8 or 13.x, CMake >= 3.22 and Ninja (VS
+2026 ships both). VS 2026 is tested with CUDA 13.4; older nvcc releases may reject its compiler. From an
+**x64 Native Tools Command Prompt for VS**:
+
+```bat
+powershell -ExecutionPolicy Bypass -File scripts\build_cunls_windows.ps1 build_windows
+```
+
+The script installs the Release shared library (`bin\cunls.dll` and its import library `lib\cunls.lib`)
+to `build_windows\shared`, the static library (`lib\cunls.lib`) to `build_windows\static`, and the cuDSS
+redistributable to `build_windows\cudss`. `EXTRA_CMAKE_ARGS` works as for the Linux scripts. To build and
+run the C++ tests:
+
+```bat
+set EXTRA_CMAKE_ARGS=-DBUILD_TESTING=ON
+powershell -ExecutionPolicy Bypass -File scripts\build_cunls_windows.ps1 build_windows
+powershell -ExecutionPolicy Bypass -File scripts\test_cunls_windows.ps1 build_windows
+```
+
+- Only Release builds are supported. The API passes `std::string` and `std::vector` across the DLL
+  boundary, so applications must also build in Release (Debug fails to link with an
+  `_ITERATOR_DEBUG_LEVEL` mismatch) with the same MSVC toolset version.
+- At runtime, `cunls.dll` and the CUDA DLLs (`%CUDA_PATH%\bin`, or `%CUDA_PATH%\bin\x64` for CUDA 13)
+  must be on `PATH`, and `cudss64_0.dll` too to use the cuDSS solver.
+- `find_package(cunls)` passes the compile flags the headers need (`/Zc:preprocessor`, and `CUNLS_STATIC`
+  for the static library) on to consumers.
 
 ## Quick Start
 

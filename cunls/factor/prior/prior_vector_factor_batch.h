@@ -19,6 +19,7 @@
 
 #include <cuda/std/array>
 
+#include "cunls/common/export.h"
 #include "cunls/common/helper.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
@@ -39,10 +40,11 @@ namespace cunls {
  *                   nullptr means item t reads observation t % num_factors
  * @param num_factors Number of observations; 0 means num_vectors
  */
-void LaunchPriorVectorFactorKernel(const float *observations, float const *const *state_pointers,
-                                   float *residuals, float *jacobians, int dim, int num_vectors,
-                                   cudaStream_t stream, const int *factor_ids = nullptr,
-                                   int num_factors = 0);
+CUNLS_API void LaunchPriorVectorFactorKernel(const float *observations,
+                                             float const *const *state_pointers, float *residuals,
+                                             float *jacobians, int dim, int num_vectors,
+                                             cudaStream_t stream, const int *factor_ids = nullptr,
+                                             int num_factors = 0);
 
 /**
  * @brief Batch factor for prior vector constraints.

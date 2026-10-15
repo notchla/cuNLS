@@ -18,6 +18,7 @@
 #pragma once
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -41,7 +42,7 @@ namespace cunls {
  *   - 6: First state (SE3 pose tangent)
  *   - 3: Second state (3D point)
  */
-class ReprojectionFactorBatch : public SizedFactorBatch<2, 6, 3> {
+class CUNLS_CLASS_API ReprojectionFactorBatch : public SizedFactorBatch<2, 6, 3> {
  public:
   /**
    * @brief Constructs with identity camera-from-rig transforms.
@@ -51,8 +52,8 @@ class ReprojectionFactorBatch : public SizedFactorBatch<2, 6, 3> {
    *        count starts at 0: call SetNumActiveFactors(n) before evaluating or solving.
    * @param z_threshold  Minimum depth for valid projection.
    */
-  ReprojectionFactorBatch(const Vector<2> *observations, size_t capacity,
-                          float z_threshold = 1e-3f);
+  CUNLS_API ReprojectionFactorBatch(const Vector<2> *observations, size_t capacity,
+                                    float z_threshold = 1e-3f);
 
   /**
    * @brief Constructs with custom camera-from-rig transforms.
@@ -67,11 +68,12 @@ class ReprojectionFactorBatch : public SizedFactorBatch<2, 6, 3> {
    *        count starts at 0: call SetNumActiveFactors(n) before evaluating or solving.
    * @param z_threshold  Minimum depth for valid projection.
    */
-  ReprojectionFactorBatch(const Vector<2> *observations, const SE3Transform *poses_camera_from_rig,
-                          size_t capacity, float z_threshold = 1e-3f);
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API ReprojectionFactorBatch(const Vector<2> *observations,
+                                    const SE3Transform *poses_camera_from_rig, size_t capacity,
+                                    float z_threshold = 1e-3f);
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
  private:
   ReprojectionFactorBatch() = delete;

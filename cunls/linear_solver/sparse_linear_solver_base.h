@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 
 namespace cunls {
@@ -45,7 +46,7 @@ class Problem;  // forward declaration; defined in cunls/minimizer/problem.h.
  * build its block-Jacobi preconditioner without a downcast at the call
  * site).  Solvers that don't care can simply ignore the argument.
  */
-class SparseLinearSolver {
+class CUNLS_API SparseLinearSolver {
  public:
   /**
    * @brief Performs setup work for the linear system.

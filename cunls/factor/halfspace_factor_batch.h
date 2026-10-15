@@ -19,15 +19,17 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/factor/sized_factor_batch.h"
 
 namespace cunls {
 
 /** @brief Launches HalfspaceFactorBatch for `dim`-dimensional states. */
-void LaunchHalfspaceKernel(const float *normals, const float *offsets,
-                           float const *const *state_pointers, float *residuals, float *jacobians,
-                           int dim, size_t num_items, const int *factor_ids, size_t num_factors,
-                           cudaStream_t stream);
+CUNLS_API void LaunchHalfspaceKernel(const float *normals, const float *offsets,
+                                     float const *const *state_pointers, float *residuals,
+                                     float *jacobians, int dim, size_t num_items,
+                                     const int *factor_ids, size_t num_factors,
+                                     cudaStream_t stream);
 
 /**
  * @brief Signed halfspace value `r = aᵀ x - b` of a Dim-dimensional vector

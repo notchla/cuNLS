@@ -7,6 +7,8 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
+
 namespace cunls {
 
 /**
@@ -23,32 +25,29 @@ namespace cunls {
  *       right Jacobians are omitted.
  */
 
-void ComputeExpSL4(cudaStream_t stream, const float *twist,
-                   const size_t twist_stride, const size_t transform_pitch,
-                   const size_t transform_stride, size_t size,
-                   float *transform);
+CUNLS_API void ComputeExpSL4(cudaStream_t stream, const float *twist, const size_t twist_stride,
+                             const size_t transform_pitch, const size_t transform_stride,
+                             size_t size, float *transform);
 
-void ComputeLogSL4(cudaStream_t stream, const float *transform,
-                   const size_t transform_pitch, const size_t transform_stride,
-                   const size_t twist_stride, size_t size, float *twist);
+CUNLS_API void ComputeLogSL4(cudaStream_t stream, const float *transform,
+                             const size_t transform_pitch, const size_t transform_stride,
+                             const size_t twist_stride, size_t size, float *twist);
 
-void ComputeInverseSL4(cudaStream_t stream, const float *transform,
-                       const size_t transform_pitch,
-                       const size_t transform_stride,
-                       const size_t inverse_pitch, const size_t inverse_stride,
-                       size_t size, float *inverse_transform);
+CUNLS_API void ComputeInverseSL4(cudaStream_t stream, const float *transform,
+                                 const size_t transform_pitch, const size_t transform_stride,
+                                 const size_t inverse_pitch, const size_t inverse_stride,
+                                 size_t size, float *inverse_transform);
 
-void ComputeAdjointSL4(cudaStream_t stream, const float *transform,
-                       const size_t transform_pitch,
-                       const size_t transform_stride,
-                       const size_t adjoint_pitch, const size_t adjoint_stride,
-                       size_t size, float *adjoint);
+CUNLS_API void ComputeAdjointSL4(cudaStream_t stream, const float *transform,
+                                 const size_t transform_pitch, const size_t transform_stride,
+                                 const size_t adjoint_pitch, const size_t adjoint_stride,
+                                 size_t size, float *adjoint);
 
-void ComputeNegateMatrix15x15(cudaStream_t stream, const float *matrix,
-                              const size_t pitch, const size_t stride,
-                              size_t size, float *out);
+CUNLS_API void ComputeNegateMatrix15x15(cudaStream_t stream, const float *matrix,
+                                        const size_t pitch, const size_t stride, size_t size,
+                                        float *out);
 
-void FillIdentity15x15(cudaStream_t stream, size_t size, float *matrices,
-                       const size_t pitch, const size_t stride);
+CUNLS_API void FillIdentity15x15(cudaStream_t stream, size_t size, float *matrices,
+                                 const size_t pitch, const size_t stride);
 
 } // namespace cunls

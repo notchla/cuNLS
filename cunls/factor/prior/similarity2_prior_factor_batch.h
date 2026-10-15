@@ -19,6 +19,7 @@
 #include <cuda_runtime.h>
 
 #include "cunls/common/device_vector.h"
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -44,7 +45,7 @@ namespace cunls {
  * transform is stored row-major: [cos(theta), -sin(theta), tx, sin(theta),
  * cos(theta), ty, 0, 0, 1/s]
  */
-class Similarity2PriorFactorBatch : public SizedFactorBatch<4, 4> {
+class CUNLS_CLASS_API Similarity2PriorFactorBatch : public SizedFactorBatch<4, 4> {
   using Base = SizedFactorBatch<4, 4>;
 
  public:
@@ -58,7 +59,8 @@ class Similarity2PriorFactorBatch : public SizedFactorBatch<4, 4> {
    * @param capacity Number of factors the measurement buffers hold. The active
    *        count starts at 0: call SetNumActiveFactors(n) before evaluating or solving.
    */
-  Similarity2PriorFactorBatch(const Similarity2Transform *observations_ptr, size_t capacity);
+  CUNLS_API Similarity2PriorFactorBatch(const Similarity2Transform *observations_ptr,
+                                        size_t capacity);
 
   /**
    * @brief Evaluates Sim(2) prior residuals and optionally Jacobians.
@@ -73,9 +75,9 @@ class Similarity2PriorFactorBatch : public SizedFactorBatch<4, 4> {
    *        is given); 0 means NumActiveFactors().
    * @return true on success.
    */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const final;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const final;
 
  private:
   Similarity2PriorFactorBatch() = default;

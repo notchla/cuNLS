@@ -19,6 +19,7 @@
 
 #include <cuda_runtime.h>
 
+#include "cunls/common/export.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
 
@@ -102,7 +103,7 @@ struct ImuParameters {
  * do), so small batches split chains over a warp and large batches give each
  * thread a whole chain.
  */
-class ImuFactorBatch : public SizedFactorBatch<15, 6, 3, 6, 6, 3, 6> {
+class CUNLS_CLASS_API ImuFactorBatch : public SizedFactorBatch<15, 6, 3, 6, 6, 3, 6> {
  public:
   /**
    * @param imu_samples Device array of 7 floats per sample, (ω_x, ω_y, ω_z,
@@ -124,12 +125,12 @@ class ImuFactorBatch : public SizedFactorBatch<15, 6, 3, 6, 6, 3, 6> {
    * @throws std::invalid_argument if a pointer is null or a noise density is
    *         not positive.
    */
-  ImuFactorBatch(const float *imu_samples, const int *sample_offsets, size_t num_samples,
-                 const ImuParameters &parameters, size_t capacity);
+  CUNLS_API ImuFactorBatch(const float *imu_samples, const int *sample_offsets, size_t num_samples,
+                           const ImuParameters &parameters, size_t capacity);
 
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const override;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const override;
 
   const ImuParameters &Parameters() const { return parameters_; }
 

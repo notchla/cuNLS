@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "cunls/common/export.h"
 #include "cunls/common/helper.h"
 #include "cunls/common/types.h"
 #include "cunls/factor/sized_factor_batch.h"
@@ -41,7 +42,7 @@ namespace cunls {
  *       Memory layout: [R0: 4 floats][R1: 4 floats]...[RN-1: 4 floats]
  *       Each rotation is stored row-major: [cos, -sin, sin, cos]
  */
-class SO2PriorFactorBatch : public SizedFactorBatch<1, 1> {
+class CUNLS_CLASS_API SO2PriorFactorBatch : public SizedFactorBatch<1, 1> {
   using Base = SizedFactorBatch<1, 1>;
 
  public:
@@ -69,9 +70,9 @@ class SO2PriorFactorBatch : public SizedFactorBatch<1, 1> {
    *        is given); 0 means NumActiveFactors().
    * @return true on success.
    */
-  bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
-                cudaStream_t stream, const int *factor_ids = nullptr,
-                size_t num_factor_ids = 0) const final;
+  CUNLS_API bool Evaluate(float *residuals, float *jacobians, float const *const *state_pointers,
+                          cudaStream_t stream, const int *factor_ids = nullptr,
+                          size_t num_factor_ids = 0) const final;
 
  private:
   SO2PriorFactorBatch() = default;

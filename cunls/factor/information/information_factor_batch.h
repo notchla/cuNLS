@@ -22,6 +22,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "cunls/common/export.h"
 #include "cunls/common/log.h"
 #include "cunls/common/type_traits.h"
 #include "cunls/common/types.h"
@@ -46,9 +47,10 @@ namespace cunls {
  * @param num_factors Number of sqrt-information matrices; 0 means num_items.
  * @param stream CUDA stream for asynchronous execution.
  */
-void ApplyInformationToResidualItems(const float *sqrt_information, float *residuals,
-                                     size_t residual_size, size_t num_items, const int *factor_ids,
-                                     size_t num_factors, cudaStream_t stream);
+CUNLS_API void ApplyInformationToResidualItems(const float *sqrt_information, float *residuals,
+                                               size_t residual_size, size_t num_items,
+                                               const int *factor_ids, size_t num_factors,
+                                               cudaStream_t stream);
 
 /**
  * @brief Applies per-item sqrt-information matrices to Jacobian matrices.
@@ -67,10 +69,10 @@ void ApplyInformationToResidualItems(const float *sqrt_information, float *resid
  * @param num_factors Number of sqrt-information matrices; 0 means num_items.
  * @param stream CUDA stream for asynchronous execution.
  */
-void ApplyInformationToJacobianItems(const float *sqrt_information, float *jacobians,
-                                     size_t residual_size, size_t jacobian_pitch, size_t num_items,
-                                     const int *factor_ids, size_t num_factors,
-                                     cudaStream_t stream);
+CUNLS_API void ApplyInformationToJacobianItems(const float *sqrt_information, float *jacobians,
+                                               size_t residual_size, size_t jacobian_pitch,
+                                               size_t num_items, const int *factor_ids,
+                                               size_t num_factors, cudaStream_t stream);
 
 /**
  * @brief Wrapper factor that applies square-root information matrices.
@@ -194,7 +196,8 @@ class InformationFactorBatch : public T::sized_layout {
     }
 
     auto state_sizes = this->StateSizes();
-    const size_t jacobian_pitch = std::accumulate(state_sizes.begin(), state_sizes.end(), 0);
+    const size_t jacobian_pitch =
+        std::accumulate(state_sizes.begin(), state_sizes.end(), size_t{0});
 
     ApplyInformationToJacobianItems(info_ptr, jacobians, rsize, jacobian_pitch, num_items,
                                     factor_ids, num_factors, stream);

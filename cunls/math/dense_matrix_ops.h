@@ -21,6 +21,8 @@
 
 #include <cstddef>
 
+#include "cunls/common/export.h"
+
 namespace cunls {
 
 /**
@@ -33,8 +35,8 @@ namespace cunls {
  * @param pitch Leading dimension (row stride) of each matrix.
  * @param num_matrices Number of matrices in the batch.
  */
-void ComputeSqrtMatrix(cudaStream_t stream, float *spd_matrix, size_t matrix_size, size_t pitch,
-                       size_t num_matrices);
+CUNLS_API void ComputeSqrtMatrix(cudaStream_t stream, float *spd_matrix, size_t matrix_size,
+                                 size_t pitch, size_t num_matrices);
 
 /**
  * @brief Scatter dense NxN blocks into the right half of Nx(2N) Jacobian rows.
@@ -51,7 +53,8 @@ void ComputeSqrtMatrix(cudaStream_t stream, float *spd_matrix, size_t matrix_siz
  * @param dst_stride  Stride between consecutive destination blocks.
  * @param num_blocks  Number of blocks in the batch.
  */
-void ScatterToRightBlock(cudaStream_t stream, const float *src, size_t block_dim, size_t src_stride,
-                         float *dst, size_t dst_pitch, size_t dst_stride, size_t num_blocks);
+CUNLS_API void ScatterToRightBlock(cudaStream_t stream, const float *src, size_t block_dim,
+                                   size_t src_stride, float *dst, size_t dst_pitch,
+                                   size_t dst_stride, size_t num_blocks);
 
 }  // namespace cunls
