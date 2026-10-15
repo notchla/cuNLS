@@ -6,8 +6,9 @@ if(POLICY CMP0135)
   cmake_policy(SET CMP0135 NEW)
 endif()
 
+# The default CUDA architectures depend on the nvcc version, which is only known after project().
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
-  set(CMAKE_CUDA_ARCHITECTURES "75;80;86;89" CACHE STRING "CUDA architectures to compile")
+  set(_cunls_default_cuda_architectures ON)
 endif()
 
 # /usr/local/cuda/bin is often not on PATH, and distro packages such as Ubuntu's
@@ -18,6 +19,16 @@ if(NOT DEFINED CMAKE_CUDA_COMPILER AND NOT DEFINED ENV{CUDACXX} AND EXISTS "/usr
 endif()
 
 project(cunls VERSION 0.2 LANGUAGES CXX CUDA)
+
+# Blackwell (sm_100, sm_120) needs CUDA 12.8. Without its cubins those GPUs JIT the PTX, which fails
+# with cudaErrorUnsupportedPtxVersion when the driver is older than the toolkit.
+if(_cunls_default_cuda_architectures)
+  set(CMAKE_CUDA_ARCHITECTURES 75 80 86 89)
+  if(CMAKE_CUDA_COMPILER_VERSION VERSION_GREATER_EQUAL 12.8)
+    list(APPEND CMAKE_CUDA_ARCHITECTURES 100 120)
+  endif()
+  set(CMAKE_CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}" CACHE STRING "CUDA architectures to compile" FORCE)
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

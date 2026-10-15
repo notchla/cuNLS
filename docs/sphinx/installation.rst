@@ -93,9 +93,10 @@ Build on Windows (MSVC)
 ===============================================================================
 
 Windows builds run natively, without Docker. Requirements: Visual Studio 2022
-(Build Tools with the "Desktop development with C++" workload), CUDA Toolkit
-12.8 or 13.x, CMake >= 3.22 and Ninja. From an **x64 Native Tools Command
-Prompt for VS 2022**:
+or 2026 (Build Tools with the "Desktop development with C++" workload), CUDA
+Toolkit 12.8 or 13.x, CMake >= 3.22 and Ninja (VS 2026 ships both). VS 2026 is
+tested with CUDA 13.4; older nvcc releases may reject its compiler. From an
+**x64 Native Tools Command Prompt for VS**:
 
 .. code-block:: bat
 
@@ -128,7 +129,9 @@ CUDA target and Arm platform selection
 ===============================================================================
 
 cuNLS preserves caller-provided CUDA compiler and architecture settings.
-Without one, ``/usr/local/cuda/bin/nvcc`` is used when it exists. A native
+Without one, ``/usr/local/cuda/bin/nvcc`` is used when it exists, and the
+architectures default to ``75;80;86;89``, plus ``100;120`` (Blackwell) with
+CUDA 12.8 or later. A native
 Jetson Orin build can compile an SM 87 cubin and avoid PTX JIT compatibility
 requirements:
 

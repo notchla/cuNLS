@@ -129,7 +129,7 @@ pip wheel . --no-build-isolation --no-deps --wheel-dir ../dist
 
 #### Build the wheel on Windows
 
-From an **x64 Native Tools Command Prompt for VS 2022** (see [Windows (MSVC)](#windows-msvc) for the
+From an **x64 Native Tools Command Prompt for VS** (see [Windows (MSVC)](#windows-msvc) for the
 toolchain), in a Python environment:
 
 ```bat
@@ -227,7 +227,8 @@ By default this builds a shared library. Pass `-DBUILD_SHARED_LIBS=OFF` to
 build a static library instead.
 
 CUDA compiler and architecture selections supplied by the caller are preserved. Without one,
-`/usr/local/cuda/bin/nvcc` is used when it exists. For example, a native Jetson Orin build can avoid
+`/usr/local/cuda/bin/nvcc` is used when it exists, and the architectures default to
+`75;80;86;89`, plus `100;120` (Blackwell) with CUDA 12.8 or later. For example, a native Jetson Orin build can avoid
 PTX JIT compatibility requirements by compiling an SM 87 cubin:
 
 ```bash
@@ -246,9 +247,10 @@ All other solvers work as usual, and the C++ tests skip the cuDSS cases.
 
 #### Windows (MSVC)
 
-Windows builds run natively, without Docker. Requirements: Visual Studio 2022 (Build Tools with the
-"Desktop development with C++" workload), CUDA Toolkit 12.8 or 13.x, CMake >= 3.22 and Ninja. From an
-**x64 Native Tools Command Prompt for VS 2022**:
+Windows builds run natively, without Docker. Requirements: Visual Studio 2022 or 2026 (Build Tools with
+the "Desktop development with C++" workload), CUDA Toolkit 12.8 or 13.x, CMake >= 3.22 and Ninja (VS
+2026 ships both). VS 2026 is tested with CUDA 13.4; older nvcc releases may reject its compiler. From an
+**x64 Native Tools Command Prompt for VS**:
 
 ```bat
 powershell -ExecutionPolicy Bypass -File scripts\build_cunls_windows.ps1 build_windows

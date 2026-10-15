@@ -126,8 +126,8 @@ Windows builds run natively: `scripts/Dockerfile` is Linux-only and Linux contai
 Windows-container setup would need its own Dockerfile, so Windows is the one exception to the Docker rule
 for now. `scripts/build_cunls_windows.ps1`, `test_cunls_windows.ps1`, `build_pycunls_windows.ps1` and
 `test_pycunls_windows.ps1` run from an x64 VS developer shell. Each one merges an `_in_docker.sh`
-wrapper and its inner script, so keep them in step with the bash scripts. Supported: VS 2022, CUDA 12.8 and
-13.x, Release only. CI does not build Windows.
+wrapper and its inner script, so keep them in step with the bash scripts. Supported: VS 2022 and 2026 (2026 tested
+with CUDA 13.4), CUDA 12.8 and 13.x, Release only. CI does not build Windows.
 
 Symbol export rules (`cunls/common/export.h`). Every header under `cunls/` is installed, and the library
 builds with hidden visibility on Linux too, so a missing annotation also breaks the Linux test link:

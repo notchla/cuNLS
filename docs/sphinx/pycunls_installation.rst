@@ -69,7 +69,7 @@ a compatible CUDA Toolkit and GPU driver.
 Build on Windows
 ===============================================================================
 
-From an **x64 Native Tools Command Prompt for VS 2022** (see
+From an **x64 Native Tools Command Prompt for VS** (see
 :ref:`installation:Build on Windows (MSVC)` for the toolchain), in a Python
 environment:
 
